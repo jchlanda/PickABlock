@@ -8,11 +8,28 @@ from svgpathtools import svg2paths
 
 class SvgParser(object):
 
-  counter = 1
+  def __init__(self, inFileName, outFileName):
+    self.counter = 1
+    self.inFileName = inFileName
+    self.outFileName = outFileName
+    if (self.outFileName):
+      self.outFile = open(self.outFileName, "a+")
+      self.outFile.truncate(0)
 
-  def parse_svg(self, fileName):
+  def __exit__(self, *args):
+    if (self.outFileName):
+      self.outFile.close()
+
+  def output(self, message):
+    if self.outFileName:
+      self.outFile.write(message)
+      self.outFile.write("\n")
+    else:
+      print(message)
+
+  def parse_svg(self):
     shapesCoords = []
-    paths, attributes = svg2paths(sys.argv[1])
+    paths, attributes = svg2paths(self.inFileName)
     dAttribute = attributes[0]['d']
     dAttribute = re.sub(r"\s*[0-9]*\.[0-9]*,[0-9]*\.[0-9]*\s*C", "", dAttribute)
     dAttribute = re.sub(r"\s*Z", "", dAttribute)
@@ -26,47 +43,54 @@ class SvgParser(object):
         shapeCoord.append(points[0])
       shapesCoords.append(shapeCoord)
 
-    return shapesCoords
+    for s in shapesCoords:
+      self.process_shape(s)
 
-  def print_shape(self, shape):
+  def process_shape(self, shape):
     if len(shape) < 2:
       return
     shapeName = "shape{0}".format(self.counter)
     pathName = "path{0}".format(self.counter)
     self.counter += 1
-    print("imageView.layer.addSublayer({0})".format(shapeName))
-    print("{0}.opacity = 0.5".format(shapeName))
-    print("{0}.lineWidth = 2".format(shapeName))
-    print("{0}.lineJoin = CAShapeLayerLineJoin.miter".format(shapeName))
-    print("{0}.strokeColor = UIColor(hue: 0.786, saturation: 0.79, brightness: "
-          "0.53, alpha: 1.0).cgColor".format(shapeName))
-    print("{0}.fillColor = UIColor(hue: 0.786, saturation: 0.15, brightness: "
-          "0.89, alpha: 1.0).cgColor".format(shapeName))
+    self.output("imageView.layer.addSublayer({0})".format(shapeName))
+    self.output("{0}.opacity = 0.5".format(shapeName))
+    self.output("{0}.lineWidth = 2".format(shapeName))
+    self.output("{0}.lineJoin = CAShapeLayerLineJoin.miter".format(shapeName))
+    self.output(
+        "{0}.strokeColor = UIColor(hue: 0.786, saturation: 0.79, brightness: "
+        "0.53, alpha: 1.0).cgColor".format(shapeName))
+    self.output(
+        "{0}.fillColor = UIColor(hue: 0.786, saturation: 0.15, brightness: "
+        "0.89, alpha: 1.0).cgColor".format(shapeName))
     firstPoint = shape[0].split(",")
-    print("{0}.move(to: CGPoint(x: {1}, y: {2}))".format(
+    self.output("{0}.move(to: CGPoint(x: {1}, y: {2}))".format(
         pathName, firstPoint[0], firstPoint[1]))
     for point in shape[2:]:
       point = point.split(",")
-      print("{0}.addLine(to: CGPoint(x: {1}, y: {2}))".format(
+      self.output("{0}.addLine(to: CGPoint(x: {1}, y: {2}))".format(
           pathName, point[0], point[1]))
-    print("{0}.close()".format(pathName))
-    print("{0}.path = {1}.cgPath".format(shapeName, pathName))
-    print("")
+    self.output("{0}.close()".format(pathName))
+    self.output("{0}.path = {1}.cgPath".format(shapeName, pathName))
+    self.output("")
+
 
 def main():
-  if len(sys.argv) != 2:
-    print("Usage: svgparser <input_file>\n")
+  if len(sys.argv) < 2 and len(sys.argv) < 3:
+    print("Usage: svgparser <input_file> <output_file>\n")
+    print("       output_file is optional,"
+          "       if not set, result is printed to std I\O.\n")
     return
-  fileName = sys.argv[1]
-  if not os.path.exists(fileName):
-    print("Input file \"{0}\" does not exist.\n".format(fileName))
+  inFile = sys.argv[1]
+  if not os.path.exists(inFile):
+    print("Input file \"{0}\" does not exist.\n".format(inFile))
     return
+  outFile = None
+  if len(sys.argv) == 3:
+    outFile = sys.argv[2]
 
-  SP = SvgParser()
-  shapes = SP.parse_svg(fileName)
-  print(shapes)
-  for s in shapes:
-    SP.print_shape(s)
+  SP = SvgParser(inFile, outFile)
+  SP.parse_svg()
+
 
 if __name__ == "__main__":
   main()
