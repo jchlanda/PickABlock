@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ImageScrollView: UIScrollView, UIScrollViewDelegate, UIPageViewControllerDelegate {
+class ImageScrollView: UIScrollView, UIScrollViewDelegate {
 
     var Problem: BlockProblem
     var Shapes: [CAShapeLayer] = []
