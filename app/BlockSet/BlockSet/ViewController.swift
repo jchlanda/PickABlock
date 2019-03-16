@@ -40,6 +40,5 @@ class ViewController: UIViewController {
         
         self.view.addConstraints([top, left, bottom, right])
     }
-
 }
 
