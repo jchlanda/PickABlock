@@ -10,13 +10,13 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    var imageScrollView: ImageScrollView!
+    var imageScrollView: SetView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         //1. Initialize imageScrollView and adding it to viewControllers view
-        self.imageScrollView = ImageScrollView(frame: self.view.bounds)
+        self.imageScrollView = SetView(frame: self.view.bounds)
         self.view.addSubview(self.imageScrollView)
         self.layoutImageScrollView()
         
