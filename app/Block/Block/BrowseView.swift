@@ -1,6 +1,6 @@
 //
-//  SetView.swift
-//  BlockSet
+//  BrowseView.swift
+//  Block
 //
 //  Created by Jakub on 11/03/2019.
 //  Copyright © 2019 Jakub. All rights reserved.
@@ -8,38 +8,74 @@
 
 import UIKit
 
-class SetView: ImageScrollView {
+extension UIButton
+{
+    func setUpLayer(button: UIButton?, displayName: String, x: Int, y: Int, width: Int, height: Int) {
+        button!.setTitle(displayName, for: .normal)
+        button!.setTitleColor(Defs.DarkRed, for: .normal)
+        button!.layer.backgroundColor = Defs.White.withAlphaComponent(0.5).cgColor
+        button!.layer.borderColor = Defs.DarkRed.cgColor
+        button!.frame = CGRect(x: x, y: y, width:width, height:height)
+        button!.layer.borderWidth = 1.0
+        button!.layer.cornerRadius = 5.0
+        button!.layer.shadowRadius =  3.0
+        button!.layer.shadowColor =  Defs.White.cgColor
+        button!.layer.shadowOpacity =  0.3
+    }
+    
+    override open var isHighlighted: Bool {
+        get {
+            return super.isHighlighted
+        }
+        set {
+            if newValue {
+                backgroundColor = Defs.DarkRed
+                titleLabel?.textColor = Defs.White
+            }
+            else {
+                backgroundColor = Defs.White
+                titleLabel?.textColor = Defs.DarkRed
+            }
+            super.isHighlighted = newValue
+        }
+    }
+    
+}
+class BrowseView: ImageScrollView {
 
     var MaxPossibleForceShape = 0
 
-    lazy var mainSegment: UISegmentedControl = setUpSegmentedControl(elements: ["Cancel", "Submit"], yOffset: 60)
+    lazy var mainSegment: UISegmentedControl = setUpSegmentedControl(elements: ["Edit", "Delete"], yOffset: 60)
 
-//     override init(frame: CGRect) {
-//         super.init(frame: CGRect)
-//     }
-
+    var nextButton = UIButton()
+    var prevButton = UIButton()
+    
     override func display(_ image: UIImage) {
         super.display(image)
-        mainSegment.addTarget(self, action: #selector(SetView.mainSegmentedControlHandler(_:)), for: .valueChanged)
+        mainSegment.addTarget(self, action: #selector(BrowseView.mainSegmentedControlHandler(_:)), for: .valueChanged)
         superview?.addSubview(mainSegment)
-//        super.display()
+        
+        nextButton.setUpLayer(button: nextButton, displayName: "<", x: 0, y: Int(frame.maxY / 2 + 50), width: 35, height: 35)
+        prevButton.setUpLayer(button: prevButton, displayName: ">", x: Int(frame.maxX - 35), y: Int(frame.maxY / 2 + 50), width: 35, height: 35)
+//        nextButton.addTarget(self, action: #selector(BrowseView.nextPrevControlHandler(_:)), for: .valueChanged)
+//        prevButton.addTarget(self, action: #selector(BrowseView.nextPrevControlHandler(_:)), for: .valueChanged)
+//
+        nextButton.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
+        prevButton.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
+        
+        superview?.addSubview(nextButton)
+        superview?.addSubview(prevButton)
     }
-
-    func setUpSegmentedControl(elements: [String], yOffset: CGFloat, isHidden: Bool = false) -> UISegmentedControl {
-        let control = UISegmentedControl(items: elements)
-        control.layer.borderColor = Defs.DarkRed.cgColor
-        control.tintColor = Defs.DarkRed
-        control.backgroundColor = Defs.White
-        control.frame = CGRect(x: frame.minX + 10, y: frame.maxY - yOffset,
-                               width: frame.maxX - 20, height: 40)
-        control.isHidden = isHidden
-        control.layer.cornerRadius = 15.0
-        control.layer.borderWidth = 1.0
-        control.layer.masksToBounds = true
-        control.isMomentary = true
-
-        return control
+    
+    @objc func buttonAction(sender: UIButton!) {
+        print("Button Clicked")
     }
+//@objc func woof(){
+//    let vc = findViewController()
+//    let alertController:UIAlertController = vc?.presentedViewController as! UIAlertController;
+//    let vc = findViewController()
+//    vc?.present(alertController, animated: true, completion: nil)
+//}
 
     //MARK: - Handle Tap and Zoom.
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -142,7 +178,7 @@ class SetView: ImageScrollView {
         vc?.present(alertController, animated: true, completion: nil)
     }
 
-    //MARK: - Handle main segmented control.
+    //MARK: - Handle main segmented control, next and prev buttons.
     @objc func mainSegmentedControlHandler(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:

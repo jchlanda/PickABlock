@@ -1,6 +1,6 @@
 //
 //  Shared.swift
-//  BlockSet
+//  Block
 //
 //  Created by Jakub on 16/03/2019.
 //  Copyright © 2019 Jakub. All rights reserved.

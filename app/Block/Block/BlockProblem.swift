@@ -1,6 +1,6 @@
 //
 //  BlockProblem.swift
-//  BlockSet
+//  Block
 //
 //  Created by Jakub on 12/03/2019.
 //  Copyright © 2019 Jakub. All rights reserved.
