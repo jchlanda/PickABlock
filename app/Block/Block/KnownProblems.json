@@ -1,0 +1,25 @@
+{
+  "knownProblems":[
+    {
+      "name":"LinkedBoulder",
+      "begin":[ 1, 2 ],
+      "end":[ 3 ],
+      "feetOnly":[ 4, 5, 6 ],
+      "normal":[ 7, 8, 9, 10, 11, 12 ]
+    },
+    {
+      "name":"Wooof",
+      "begin":[ 2, 3 ],
+      "end":[ 4 ],
+      "feetOnly":[ 5, 6, 7 ],
+      "normal":[ 8, 9, 10, 11, 12, 13 ]
+    },
+    {
+      "name":"Strength capacity",
+      "begin": [ 224, 26 ],
+      "end": [ 429 ],
+      "feetOnly": [ 415, 402, 4, 336, 290, 260, 73 ],
+      "normal": [ 32, 334, 331, 266, 473, 461, 441 ]
+    }
+  ]
+}
