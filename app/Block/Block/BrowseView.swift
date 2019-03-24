@@ -43,9 +43,9 @@ extension UIButton
 
 class BrowseView: ImageScrollView {
 
-    var MaxPossibleForceShape = 0
+    let navigationController = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController
 
-    lazy var mainSegment: UISegmentedControl = setUpSegmentedControl(elements: ["Edit", "Delete"], yOffset: 60)
+    lazy var mainSegment: UISegmentedControl = setUpSegmentedControl(elements: ["Edit", "Delete"], yOffset: 50)
 
     var nextButton = UIButton()
     var prevButton = UIButton()
@@ -65,11 +65,13 @@ class BrowseView: ImageScrollView {
     }
 
     @objc func nextButtonAction(sender: UIButton!) {
-        Problem.displayNextKnownProblem(shapes: &Shapes)
+        ImageScrollView.Problem.displayNextKnownProblem(shapes: &Shapes)
+        setTitle()
     }
 
     @objc func prevButtonAction(sender: UIButton!) {
-        Problem.displayPrevKtnownProblem(shapes: &Shapes)
+        ImageScrollView.Problem.displayPrevKtnownProblem(shapes: &Shapes)
+        setTitle()
     }
 
     func confirmDelete() {
@@ -80,7 +82,7 @@ class BrowseView: ImageScrollView {
             alertController.dismiss(animated: true, completion: nil)
         }))
         let okAction = UIAlertAction(title: "OK", style: .default, handler: { (pAction) in
-            self.Problem.deleteProblem()
+            ImageScrollView.Problem.deleteProblem()
             alertController.dismiss(animated: true, completion: nil)
         })
         alertController.addAction(okAction)
@@ -89,19 +91,22 @@ class BrowseView: ImageScrollView {
         vc?.present(alertController, animated: true, completion: nil)
     }
 
+    func setTitle() {
+        navigationController!.viewControllers[1].navigationItem.title = ImageScrollView.Problem.getKnownProblemName()
+    }
+
     //MARK: - Handle main segmented control, next and prev buttons.
     @objc func mainSegmentedControlHandler(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
-            if let navigationController = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController {
-                let newViewController = SetViewController()
-                navigationController.pushViewController(newViewController, animated: true)
-            }
-            Problem.clean(shapes: &Shapes)
-            break
+            var newViewControllers = navigationController!.viewControllers
+            ImageScrollView.Problem.prepareForEdit()
+            newViewControllers[1] = SetViewController()
+            newViewControllers[1].view.backgroundColor = Defs.White
+            newViewControllers[1].navigationItem.title = "Set"
+            navigationController!.setViewControllers(newViewControllers, animated: true)
         case 1:
             confirmDelete()
-            break
         default:
             break
         }

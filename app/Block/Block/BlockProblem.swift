@@ -38,7 +38,7 @@ class BlockProblem {
     var end: [Int]
     var feetOnly: [Int]
     var normal: [Int]
-    
+
     init() {
         knownProblems = []
         knownProblemsIdx = 0
@@ -47,10 +47,10 @@ class BlockProblem {
         end = []
         feetOnly = []
         normal = []
-        
+
         loadJSON()
     }
-    
+
     func loadJSON() {
         if let path :String = Bundle.main.path(forResource: "KnownProblems", ofType: "json") {
             do {
@@ -108,26 +108,26 @@ class BlockProblem {
         switch type {
         case HoldType.begin:
             hold.strokeColor = Defs.GreenStroke.cgColor
-            hold.fillColor = Defs.GreenFill.cgColor
+            hold.fillColor = Defs.White.cgColor
         case HoldType.end:
             hold.strokeColor = Defs.BlueStroke.cgColor
-            hold.fillColor = Defs.BlueFill.cgColor
+            hold.fillColor = Defs.White.cgColor
         case HoldType.feetOnly:
             hold.strokeColor = Defs.YellowStroke.cgColor
-            hold.fillColor = Defs.YellowFill.cgColor
+            hold.fillColor = Defs.White.cgColor
         case HoldType.normal:
             hold.strokeColor = Defs.RedStroke.cgColor
-            hold.fillColor = Defs.RedFill.cgColor
+            hold.fillColor = Defs.White.cgColor
         default:
             hold.strokeColor = Defs.RedStroke.cgColor
-            hold.fillColor = Defs.RedFill.cgColor
+            hold.fillColor = Defs.White.cgColor
             hold.opacity = 0
         }
     }
-    
+
     func remove(index: Int, hold: inout CAShapeLayer) {
         hold.strokeColor = Defs.RedStroke.cgColor
-        hold.fillColor = Defs.RedFill.cgColor
+        hold.fillColor = Defs.White.cgColor
         hold.opacity = 0
         if let i = normal.index(of: index) {
             normal.remove(at: i)
@@ -146,7 +146,7 @@ class BlockProblem {
             return
         }
     }
-    
+
     func add(index: Int, hold: inout CAShapeLayer, type: HoldType) {
         switch type {
         case HoldType.normal:
@@ -162,11 +162,37 @@ class BlockProblem {
         }
         displayHold(type: type, hold: &hold)
     }
-    
+
     func setName(name: String) {
         self.name = name
     }
-    
+
+    func getKnownProblemName() -> String {
+        return knownProblems[knownProblemsIdx].name
+    }
+
+    func flushSaved(shapes: inout [CAShapeLayer]) {
+        for b in begin {
+            displayHold(type: HoldType.begin, hold: &shapes[b])
+        }
+        for e in end {
+            displayHold(type: HoldType.end, hold: &shapes[e])
+        }
+        for f in feetOnly {
+            displayHold(type: HoldType.feetOnly, hold: &shapes[f])
+        }
+        for n in normal {
+            displayHold(type: HoldType.normal, hold: &shapes[n])
+        }
+    }
+
+    func prepareForEdit() {
+        begin = knownProblems[knownProblemsIdx].begin
+        end = knownProblems[knownProblemsIdx].end
+        feetOnly = knownProblems[knownProblemsIdx].feetOnly
+        normal = knownProblems[knownProblemsIdx].normal
+    }
+
     func serialize(shapes: inout [CAShapeLayer], name: String) {
         print("Submit:")
         print("begin:")
@@ -194,30 +220,30 @@ class BlockProblem {
             print (Shape)
         }
     }
-    
+
     func clean(shapes: inout [CAShapeLayer]) {
         for b in begin {
             shapes[b].opacity = 0
             shapes[b].strokeColor = Defs.RedStroke.cgColor
-            shapes[b].fillColor = Defs.RedFill.cgColor
+            shapes[b].fillColor = Defs.White.cgColor
         }
         begin.removeAll()
         for e in end {
             shapes[e].opacity = 0
             shapes[e].strokeColor = Defs.RedStroke.cgColor
-            shapes[e].fillColor = Defs.RedFill.cgColor
+            shapes[e].fillColor = Defs.White.cgColor
         }
         end.removeAll()
         for n in normal {
             shapes[n].opacity = 0
             shapes[n].strokeColor = Defs.RedStroke.cgColor
-            shapes[n].fillColor = Defs.RedFill.cgColor
+            shapes[n].fillColor = Defs.White.cgColor
         }
         normal.removeAll()
         for f in feetOnly {
             shapes[f].opacity = 0
             shapes[f].strokeColor = Defs.RedStroke.cgColor
-            shapes[f].fillColor = Defs.RedFill.cgColor
+            shapes[f].fillColor = Defs.White.cgColor
         }
         feetOnly.removeAll()
     }

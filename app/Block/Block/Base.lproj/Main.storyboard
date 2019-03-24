@@ -13,14 +13,14 @@
         <!--Set-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-              <viewController id="BYZ-38-t0r" userLabel="Set" customClass="SetViewController" customModule="Block" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" userLabel="Set" customClass="SetViewController" customModule="Block" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
-                    <navigationItem key="navigationItem" title="#1" id="dKv-f4-p3M" userLabel="Set"/>
+                    <navigationItem key="navigationItem" title="Set" id="dKv-f4-p3M" userLabel="Set"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
@@ -36,7 +36,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="lK8-Zz-fqi"/>
                     </view>
-                    <navigationItem key="navigationItem" title="#2" id="AlW-Co-H0H" userLabel="Browse"/>
+                    <navigationItem key="navigationItem" title="Browse" id="AlW-Co-H0H" userLabel="Browse"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="21g-Ax-mlM" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
