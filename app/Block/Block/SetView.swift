@@ -12,7 +12,7 @@ class SetView: ImageScrollView {
 
     var longTouchPoint: CGPoint = CGPoint()
     
-    
+    var stickyToggle = false
 
     lazy var mainSegment: UISegmentedControl = setUpSegmentedControl(elements: ["Cancel", "Submit"], yOffset: 50)
 
@@ -27,12 +27,46 @@ class SetView: ImageScrollView {
         ImageScrollView.Problem.flushSaved(shapes: &Shapes)
     }
 
-
+    func createSwitch () -> UISwitch{
+        let switchControl = UISwitch(frame:CGRect(x: 10, y: 20, width: 0, height: 0));
+        switchControl.isOn = stickyToggle
+        switchControl.setOn(stickyToggle, animated: false);
+        switchControl.addTarget(self, action: #selector(self.switchValueDidChange), for: .valueChanged);
+        return switchControl
+    }
+    
+    @objc func switchValueDidChange(sender:UISwitch!){
+        print("TODO: JKB: Finish Sticky.", sender)
+        print("sender.isOn:", sender.isOn)
+        stickyToggle = sender.isOn
+        ImageScrollView.Problem.changeSticky(isOn: sender.isOn)
+    }
+    
     // TODO: JKB: Should problem handle displayig shapes?
     func showSetSpecial(index: Int) {
         var shape = Shapes[index]
         let alertController = UIAlertController(title: "Set special:", message: "", preferredStyle: .alert)
+        
+        let customView = UIView()
+        alertController.view.addSubview(customView)
+        customView.translatesAutoresizingMaskIntoConstraints = false
+        customView.topAnchor.constraint(equalTo: alertController.view.topAnchor, constant: 45).isActive = true
+        customView.rightAnchor.constraint(equalTo: alertController.view.rightAnchor, constant: -10).isActive = true
+        customView.leftAnchor.constraint(equalTo: alertController.view.leftAnchor, constant: 10).isActive = true
+        customView.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        customView.frame = CGRect(x: 0 , y: 0, width: alertController.view.frame.width, height: alertController.view.frame.height * 0.7)
+        let stickyLabel: UILabel = UILabel()
+        stickyLabel.text = "Sticky"
+        stickyLabel.frame = CGRect(x: 80, y: 25, width: 80, height: 20)
+        stickyLabel.textAlignment = NSTextAlignment.center
+        stickyLabel.textColor = Defs.RedStroke
+        customView.addSubview(stickyLabel)
+        customView.addSubview(createSwitch())
+
+        alertController.view.translatesAutoresizingMaskIntoConstraints = false
+        alertController.view.heightAnchor.constraint(equalToConstant: 325).isActive = true
         alertController.view.tintColor = Defs.RedStroke
+        
         let begin = UIAlertAction(title: "Begin", style: UIAlertAction.Style.default) {
             UIAlertAction in
             ImageScrollView.Problem.add(index: index, hold: &shape, type: BlockProblem.HoldType.begin)
@@ -58,7 +92,7 @@ class SetView: ImageScrollView {
         alertController.addAction(feet)
         alertController.addAction(normal)
         alertController.addAction(cancel)
-
+        
         let vc = findViewController()
         vc?.present(alertController, animated: true, completion: nil)
     }

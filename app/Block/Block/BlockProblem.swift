@@ -39,6 +39,9 @@ class BlockProblem {
     var feetOnly: [Int]
     var normal: [Int]
 
+    var stickyToggle = false
+    var sticky: CGColor? = nil
+    
     init() {
         knownProblems = []
         knownProblemsIdx = 0
@@ -64,6 +67,10 @@ class BlockProblem {
         }
     }
 
+    func changeSticky(isOn: Bool) {
+        stickyToggle = isOn
+    }
+    
     func displayNextKnownProblem(shapes: inout [CAShapeLayer]) {
         if (knownProblemsIdx == knownProblems.count - 1) {
             knownProblemsIdx = 0
@@ -104,23 +111,22 @@ class BlockProblem {
     }
 
     func displayHold(type: HoldType, hold: inout CAShapeLayer) {
+        if (!stickyToggle && sticky != nil) {
+            sticky = nil
+        }
         hold.opacity = 0.5
+        hold.fillColor = Defs.White.cgColor
         switch type {
         case HoldType.begin:
             hold.strokeColor = Defs.GreenStroke.cgColor
-            hold.fillColor = Defs.White.cgColor
         case HoldType.end:
             hold.strokeColor = Defs.BlueStroke.cgColor
-            hold.fillColor = Defs.White.cgColor
         case HoldType.feetOnly:
             hold.strokeColor = Defs.YellowStroke.cgColor
-            hold.fillColor = Defs.White.cgColor
         case HoldType.normal:
             hold.strokeColor = Defs.RedStroke.cgColor
-            hold.fillColor = Defs.White.cgColor
         default:
             hold.strokeColor = Defs.RedStroke.cgColor
-            hold.fillColor = Defs.White.cgColor
             hold.opacity = 0
         }
     }
