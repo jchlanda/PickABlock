@@ -9,11 +9,32 @@
 import Foundation
 import UIKit
 
-struct KnownProblems : Decodable {
+struct KnownProblems : Codable {
     var knownProblems: [Problem]
 }
 
-struct Problem : Decodable {
+struct UserLocalProblems : Codable {
+    init() {
+        userLocalProblems = []
+    }
+    var userLocalProblems: [Problem]
+}
+
+struct Problem : Codable {
+    init() {
+        self.name = ""
+        self.begin = []
+        self.end = []
+        self.feetOnly = []
+        self.normal = []
+    }
+    init(name: String, begin: [Int], end: [Int], feetOnly: [Int], normal: [Int]) {
+        self.name = name
+        self.begin = begin
+        self.end = end
+        self.feetOnly = feetOnly
+        self.normal = normal
+    }
     var name: String
     var begin: [Int]
     var end: [Int]
@@ -21,8 +42,16 @@ struct Problem : Decodable {
     var normal: [Int]
 }
 
-// TODO: JKB: BlockProblem should hold the shapes. Pass it to view controller onlly to be added to the layer, at the time of initialization.
-// TODO: it should have an init function that would call loadJSON
+extension Problem: Equatable {
+    static func == (lhs: Problem, rhs: Problem) -> Bool {
+        return lhs.name == rhs.name &&
+            lhs.begin == rhs.begin &&
+            lhs.end == rhs.end &&
+            lhs.feetOnly == rhs.feetOnly &&
+            lhs.normal == rhs.normal
+    }
+}
+
 class BlockProblem {
     enum HoldType {
         case begin
@@ -31,46 +60,74 @@ class BlockProblem {
         case normal
         case none
     }
-    var knownProblems: [Problem]
-    var knownProblemsIdx: Int
-    var name: String
-    var begin: [Int]
-    var end: [Int]
-    var feetOnly: [Int]
-    var normal: [Int]
 
     var stickyToggle = false
     var sticky: CGColor? = nil
-    
-    init() {
-        knownProblems = []
-        knownProblemsIdx = 0
-        name = ""
-        begin = []
-        end = []
-        feetOnly = []
-        normal = []
 
-        loadJSON()
+    var knownProblems: [Problem] = []
+    let knownProblemsFile = Bundle.main.path(forResource: "KnownProblems", ofType: "json")!
+    var knownProblemsIdx: Int = 0
+    var ulp: UserLocalProblems = UserLocalProblems()
+    var userLocalFile = URL.documentsURL.appendingPathComponent("UserLocalProblems.json")
+    var userLocalStartIdx = 0
+    var currentProblem: Problem = Problem()
+
+    init() {
+        knownProblems = loadKnownProblems(path: knownProblemsFile)
+        userLocalStartIdx = knownProblems.count
+        let fileManager = FileManager.default
+        if !fileManager.fileExists(atPath: userLocalFile.path) {
+            FileManager.default.createFile(atPath: userLocalFile.path, contents: nil, attributes: nil)
+        } else {
+            ulp = loadUserLocalProblems(path: userLocalFile.path)
+            knownProblems.append(contentsOf: ulp.userLocalProblems)
+        }
+
     }
 
-    func loadJSON() {
-        if let path :String = Bundle.main.path(forResource: "KnownProblems", ofType: "json") {
-            do {
-                let data = try Data(contentsOf: URL(fileURLWithPath: path))
-                let decoder = JSONDecoder()
-                let jsonData = try decoder.decode(KnownProblems.self, from: data)
-                knownProblems = jsonData.knownProblems
-            } catch {
-                print("error:\(error)")
+    func loadKnownProblems(path: String) -> [Problem] {
+        do {
+            let data = try Data(contentsOf: URL(fileURLWithPath: path))
+            let decoder = JSONDecoder()
+            let jsonData = try decoder.decode(KnownProblems.self, from: data)
+            return jsonData.knownProblems
+        } catch {
+            print("error:\(error)")
+            return []
+        }
+    }
+
+    func loadUserLocalProblems(path: String) -> UserLocalProblems {
+        do {
+            let contents = try NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue)
+            if (contents == "") {
+                return UserLocalProblems()
             }
+            let data = try Data(contentsOf: URL(fileURLWithPath: path))
+            let decoder = JSONDecoder()
+            let jsonData = try decoder.decode(UserLocalProblems.self, from: data)
+            return jsonData
+        } catch {
+            print("error:\(error)")
+            return UserLocalProblems()
+        }
+    }
+
+    func saveUserLocalProblems(path: URL, problems: UserLocalProblems) {
+        do {
+            let encoder = JSONEncoder()
+            let jsonData = try encoder.encode(problems)
+            try jsonData.write(to: path)
+        }
+        catch {
+            print("error:\(error)")
         }
     }
 
     func changeSticky(isOn: Bool) {
         stickyToggle = isOn
     }
-    
+
     func displayNextKnownProblem(shapes: inout [CAShapeLayer]) {
         if (knownProblemsIdx == knownProblems.count - 1) {
             knownProblemsIdx = 0
@@ -80,7 +137,7 @@ class BlockProblem {
         displayKnownProblem(problemIdx: knownProblemsIdx, shapes: &shapes)
     }
 
-    func displayPrevKtnownProblem(shapes: inout [CAShapeLayer]) {
+    func displayPrevKnownProblem(shapes: inout [CAShapeLayer]) {
         if (knownProblemsIdx == 0) {
             knownProblemsIdx = knownProblems.count - 1
         } else {
@@ -91,22 +148,18 @@ class BlockProblem {
 
     func displayKnownProblem(problemIdx: Int, shapes: inout [CAShapeLayer]) {
         clean(shapes: &shapes)
-        let problem = knownProblems[problemIdx]
-        for b in problem.begin {
+        currentProblem = knownProblems[problemIdx]
+        for b in currentProblem.begin {
             displayHold(type: HoldType.begin, hold: &shapes[b])
-            begin.append(b)
         }
-        for e in problem.end {
+        for e in currentProblem.end {
             displayHold(type: HoldType.end, hold: &shapes[e])
-            end.append(e)
         }
-        for f in problem.feetOnly {
+        for f in currentProblem.feetOnly {
             displayHold(type: HoldType.feetOnly, hold: &shapes[f])
-            feetOnly.append(f)
         }
-        for n in problem.normal {
+        for n in currentProblem.normal {
             displayHold(type: HoldType.normal, hold: &shapes[n])
-            normal.append(n)
         }
     }
 
@@ -135,20 +188,20 @@ class BlockProblem {
         hold.strokeColor = Defs.RedStroke.cgColor
         hold.fillColor = Defs.White.cgColor
         hold.opacity = 0
-        if let i = normal.index(of: index) {
-            normal.remove(at: i)
+        if let i = currentProblem.normal.firstIndex(of: index) {
+            currentProblem.normal.remove(at: i)
             return
         }
-        if let i = begin.index(of: index) {
-            begin.remove(at: i)
+        if let i = currentProblem.begin.firstIndex(of: index) {
+            currentProblem.begin.remove(at: i)
             return
         }
-        if let i = end.index(of: index) {
-            end.remove(at: i)
+        if let i = currentProblem.end.firstIndex(of: index) {
+            currentProblem.end.remove(at: i)
             return
         }
-        if let i = feetOnly.index(of: index) {
-            feetOnly.remove(at: i)
+        if let i = currentProblem.feetOnly.firstIndex(of: index) {
+            currentProblem.feetOnly.remove(at: i)
             return
         }
     }
@@ -156,21 +209,17 @@ class BlockProblem {
     func add(index: Int, hold: inout CAShapeLayer, type: HoldType) {
         switch type {
         case HoldType.normal:
-            normal.append(index)
+            currentProblem.normal.append(index)
         case HoldType.begin:
-            begin.append(index)
+            currentProblem.begin.append(index)
         case HoldType.end:
-            end.append(index)
+            currentProblem.end.append(index)
         case HoldType.feetOnly:
-            feetOnly.append(index)
+            currentProblem.feetOnly.append(index)
         default:
             return
         }
         displayHold(type: type, hold: &hold)
-    }
-
-    func setName(name: String) {
-        self.name = name
     }
 
     func getKnownProblemName() -> String {
@@ -178,75 +227,51 @@ class BlockProblem {
     }
 
     func flushSaved(shapes: inout [CAShapeLayer]) {
-        for b in begin {
+        for b in currentProblem.begin {
             displayHold(type: HoldType.begin, hold: &shapes[b])
         }
-        for e in end {
+        for e in currentProblem.end {
             displayHold(type: HoldType.end, hold: &shapes[e])
         }
-        for f in feetOnly {
+        for f in currentProblem.feetOnly {
             displayHold(type: HoldType.feetOnly, hold: &shapes[f])
         }
-        for n in normal {
+        for n in currentProblem.normal {
             displayHold(type: HoldType.normal, hold: &shapes[n])
         }
     }
 
     func prepareForEdit() {
-        begin = knownProblems[knownProblemsIdx].begin
-        end = knownProblems[knownProblemsIdx].end
-        feetOnly = knownProblems[knownProblemsIdx].feetOnly
-        normal = knownProblems[knownProblemsIdx].normal
+        currentProblem.begin = knownProblems[knownProblemsIdx].begin
+        currentProblem.end = knownProblems[knownProblemsIdx].end
+        currentProblem.feetOnly = knownProblems[knownProblemsIdx].feetOnly
+        currentProblem.normal = knownProblems[knownProblemsIdx].normal
     }
 
     func serialize(shapes: inout [CAShapeLayer], name: String) {
-        print("Submit:")
-        print("begin:")
-        for (i, hold) in begin.enumerated() {
-            let Shape = shapes[hold]
-            print("i: ", i, " -> hold: ", hold)
-            print (Shape)
-        }
-        print("end:")
-        for (i, hold) in end.enumerated() {
-            let Shape = shapes[hold]
-            print("i: ", i, " -> hold: ", hold)
-            print (Shape)
-        }
-        print("feetOnly:")
-        for (i, hold) in feetOnly.enumerated() {
-            let Shape = shapes[hold]
-            print("i: ", i, " -> hold: ", hold)
-            print (Shape)
-        }
-        print("normal:")
-        for (i, hold) in normal.enumerated() {
-            let Shape = shapes[hold]
-            print("i: ", i, " -> hold: ", hold)
-            print (Shape)
-        }
+        currentProblem.name = name
+        knownProblems.append(currentProblem)
+        ulp.userLocalProblems.append(currentProblem)
+        saveUserLocalProblems(path: userLocalFile, problems: ulp)
     }
 
     func clean(shapes: inout [CAShapeLayer]) {
-        for b in begin {
+        for b in currentProblem.begin {
             shapes[b].opacity = 0
             shapes[b].strokeColor = Defs.RedStroke.cgColor
             shapes[b].fillColor = Defs.White.cgColor
         }
-        begin.removeAll()
-        for e in end {
+        for e in currentProblem.end {
             shapes[e].opacity = 0
             shapes[e].strokeColor = Defs.RedStroke.cgColor
             shapes[e].fillColor = Defs.White.cgColor
         }
-        end.removeAll()
-        for n in normal {
+        for n in currentProblem.normal {
             shapes[n].opacity = 0
             shapes[n].strokeColor = Defs.RedStroke.cgColor
             shapes[n].fillColor = Defs.White.cgColor
         }
-        normal.removeAll()
-        for f in feetOnly {
+        for f in currentProblem.feetOnly {
             shapes[f].opacity = 0
             shapes[f].strokeColor = Defs.RedStroke.cgColor
             shapes[f].fillColor = Defs.White.cgColor
