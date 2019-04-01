@@ -241,6 +241,7 @@ class BlockProblem {
         }
     }
 
+    // Should the original problem be removed?
     func prepareForEdit() {
         currentProblem.begin = knownProblems[knownProblemsIdx].begin
         currentProblem.end = knownProblems[knownProblemsIdx].end
@@ -276,10 +277,37 @@ class BlockProblem {
             shapes[f].strokeColor = Defs.RedStroke.cgColor
             shapes[f].fillColor = Defs.White.cgColor
         }
-        feetOnly.removeAll()
+        currentProblem = Problem()
+    }
+
+    func canDeleteProblem() -> Bool {
+        return knownProblemsIdx >= userLocalStartIdx
     }
 
     func deleteProblem() {
-        print("BlockProblem -> deleteProblem")
+        if let idx = knownProblems.firstIndex(where: { $0 == currentProblem }) {
+            knownProblems.remove(at: idx)
+            if (knownProblemsIdx > 0) {
+                knownProblemsIdx -= 1
+            }
+            else {
+                knownProblemsIdx = knownProblems.count - 1
+            }
+        }
+        if let idx = ulp.userLocalProblems.firstIndex(where: { $0 == currentProblem }) {
+            ulp.userLocalProblems.remove(at: idx)
+            saveUserLocalProblems(path: userLocalFile, problems: ulp)
+        }
+    }
+}
+
+extension URL {
+    static var documentsURL: URL {
+        return try! FileManager
+            .default
+            .url(for: .documentDirectory,
+                 in: .userDomainMask,
+                 appropriateFor: nil,
+                 create: true)
     }
 }

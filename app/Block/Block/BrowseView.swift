@@ -70,22 +70,32 @@ class BrowseView: ImageScrollView {
     }
 
     @objc func prevButtonAction(sender: UIButton!) {
-        ImageScrollView.Problem.displayPrevKtnownProblem(shapes: &Shapes)
+        ImageScrollView.Problem.displayPrevKnownProblem(shapes: &Shapes)
         setTitle()
     }
 
     func confirmDelete() {
-        let alertController = UIAlertController(title: "Are you sure you want to delete a problem?", message: "", preferredStyle: .alert)
+        let canDelete = ImageScrollView.Problem.canDeleteProblem()
+        let alertController = UIAlertController(title: "", message: "", preferredStyle: .alert)
         alertController.view.tintColor = Defs.RedStroke
-
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (pAction) in
-            alertController.dismiss(animated: true, completion: nil)
-        }))
-        let okAction = UIAlertAction(title: "OK", style: .default, handler: { (pAction) in
-            ImageScrollView.Problem.deleteProblem()
-            alertController.dismiss(animated: true, completion: nil)
-        })
-        alertController.addAction(okAction)
+        
+        if canDelete {
+            alertController.title = "Are you sure you want to delete a problem?"
+            let okAction = UIAlertAction(title: "OK", style: .default, handler: { (pAction) in
+                ImageScrollView.Problem.deleteProblem()
+                alertController.dismiss(animated: true, completion: nil)
+            })
+            alertController.addAction(okAction)
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (pAction) in
+                alertController.dismiss(animated: true, completion: nil)
+            }))
+        } else {
+            alertController.title = "The problem is in the default set and can not be removed."
+            alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { (pAction) in
+                alertController.dismiss(animated: true, completion: nil)
+            }))
+        }
+        
         // show alert controller
         let vc = findViewController()
         vc?.present(alertController, animated: true, completion: nil)

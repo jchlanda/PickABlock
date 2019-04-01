@@ -36,7 +36,7 @@ class SetView: ImageScrollView {
     }
     
     @objc func switchValueDidChange(sender:UISwitch!){
-        print("TODO: JKB: Finish Sticky.", sender)
+        print("TODO: JKB: Finish Sticky.", sender as Any)
         print("sender.isOn:", sender.isOn)
         stickyToggle = sender.isOn
         ImageScrollView.Problem.changeSticky(isOn: sender.isOn)
