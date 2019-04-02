@@ -13,6 +13,7 @@ class SetView: ImageScrollView {
     var longTouchPoint: CGPoint = CGPoint()
     
     var stickyToggle = false
+    var stickyChanged = false
 
     lazy var mainSegment: UISegmentedControl = setUpSegmentedControl(elements: ["Cancel", "Submit"], yOffset: 50)
 
@@ -36,10 +37,8 @@ class SetView: ImageScrollView {
     }
     
     @objc func switchValueDidChange(sender:UISwitch!){
-        print("TODO: JKB: Finish Sticky.", sender as Any)
-        print("sender.isOn:", sender.isOn)
+        stickyChanged = sender.isOn
         stickyToggle = sender.isOn
-        ImageScrollView.Problem.changeSticky(isOn: sender.isOn)
     }
     
     // TODO: JKB: Should problem handle displayig shapes?
@@ -57,6 +56,7 @@ class SetView: ImageScrollView {
         customView.frame = CGRect(x: 0 , y: 0, width: alertController.view.frame.width, height: alertController.view.frame.height * 0.7)
         let stickyLabel: UILabel = UILabel()
         stickyLabel.text = "Sticky"
+        stickyLabel.font = UIFont.boldSystemFont(ofSize: stickyLabel.font.pointSize)
         stickyLabel.frame = CGRect(x: 80, y: 25, width: 80, height: 20)
         stickyLabel.textAlignment = NSTextAlignment.center
         stickyLabel.textColor = Defs.RedStroke
@@ -69,19 +69,35 @@ class SetView: ImageScrollView {
         
         let begin = UIAlertAction(title: "Begin", style: UIAlertAction.Style.default) {
             UIAlertAction in
-            ImageScrollView.Problem.add(index: index, hold: &shape, type: BlockProblem.HoldType.begin)
+            if (self.stickyChanged) {
+                ImageScrollView.Problem.setSticky(type: HoldType.begin)
+                self.stickyChanged = false
+            }
+            ImageScrollView.Problem.add(index: index, hold: &shape, type: HoldType.begin, isSticky: self.stickyToggle)
         }
         let end = UIAlertAction(title: "End", style: UIAlertAction.Style.default) {
             UIAlertAction in
-            ImageScrollView.Problem.add(index: index, hold: &shape, type: BlockProblem.HoldType.end)
+            if (self.stickyChanged) {
+                ImageScrollView.Problem.setSticky(type: HoldType.end)
+                self.stickyChanged = false
+            }
+            ImageScrollView.Problem.add(index: index, hold: &shape, type: HoldType.end, isSticky: self.stickyToggle)
         }
         let feet = UIAlertAction(title: "Feet only", style: UIAlertAction.Style.default) {
             UIAlertAction in
-            ImageScrollView.Problem.add(index: index, hold: &shape, type: BlockProblem.HoldType.feetOnly)
+            if (self.stickyChanged) {
+                ImageScrollView.Problem.setSticky(type: HoldType.feetOnly)
+                self.stickyChanged = false
+            }
+            ImageScrollView.Problem.add(index: index, hold: &shape, type: HoldType.feetOnly, isSticky: self.stickyToggle)
         }
         let normal = UIAlertAction(title: "Normal", style: UIAlertAction.Style.default) {
             UIAlertAction in
-            ImageScrollView.Problem.add(index: index, hold: &shape, type: BlockProblem.HoldType.normal)
+            if (self.stickyChanged) {
+                ImageScrollView.Problem.setSticky(type: HoldType.normal)
+                self.stickyChanged = false
+            }
+            ImageScrollView.Problem.add(index: index, hold: &shape, type: HoldType.normal, isSticky: self.stickyToggle)
         }
         let cancel = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) {
             UIAlertAction in
@@ -118,7 +134,7 @@ class SetView: ImageScrollView {
             var sh = Shapes[i]
             if sh.path!.contains(point) {
                 if (sh.opacity == 0) {
-                    ImageScrollView.Problem.add(index: i, hold: &sh, type: BlockProblem.HoldType.normal)
+                    ImageScrollView.Problem.add(index: i, hold: &sh, type: HoldType.normal, isSticky: stickyToggle)
                 } else {
                     ImageScrollView.Problem.remove(index: i, hold: &sh)
                 }

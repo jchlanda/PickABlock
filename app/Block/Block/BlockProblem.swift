@@ -52,17 +52,23 @@ extension Problem: Equatable {
     }
 }
 
-class BlockProblem {
-    enum HoldType {
-        case begin
-        case end
-        case feetOnly
-        case normal
-        case none
-    }
+enum HoldType {
+    case begin
+    case end
+    case feetOnly
+    case normal
+    case none
+}
 
-    var stickyToggle = false
-    var sticky: CGColor? = nil
+struct Sticky {
+    var value : HoldType
+    init() {
+      value = HoldType.none
+    }
+}
+
+class BlockProblem {
+    var stickyToggle: Sticky = Sticky()
 
     var knownProblems: [Problem] = []
     let knownProblemsFile = Bundle.main.path(forResource: "KnownProblems", ofType: "json")!
@@ -124,8 +130,8 @@ class BlockProblem {
         }
     }
 
-    func changeSticky(isOn: Bool) {
-        stickyToggle = isOn
+    func setSticky(type: HoldType) {
+        stickyToggle.value = type
     }
 
     func displayNextKnownProblem(shapes: inout [CAShapeLayer]) {
@@ -164,9 +170,6 @@ class BlockProblem {
     }
 
     func displayHold(type: HoldType, hold: inout CAShapeLayer) {
-        if (!stickyToggle && sticky != nil) {
-            sticky = nil
-        }
         hold.opacity = 0.5
         hold.fillColor = Defs.White.cgColor
         switch type {
@@ -206,8 +209,12 @@ class BlockProblem {
         }
     }
 
-    func add(index: Int, hold: inout CAShapeLayer, type: HoldType) {
-        switch type {
+    func add(index: Int, hold: inout CAShapeLayer, type: HoldType, isSticky: Bool) {
+        var currType = type
+        if (isSticky) {
+          currType = stickyToggle.value
+        }
+        switch currType {
         case HoldType.normal:
             currentProblem.normal.append(index)
         case HoldType.begin:
@@ -219,7 +226,7 @@ class BlockProblem {
         default:
             return
         }
-        displayHold(type: type, hold: &hold)
+        displayHold(type: currType, hold: &hold)
     }
 
     func getKnownProblemName() -> String {
