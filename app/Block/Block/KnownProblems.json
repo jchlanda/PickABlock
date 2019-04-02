@@ -1,18 +1,18 @@
 {
   "knownProblems":[
     {
-      "name":"LinkedBoulder",
-      "begin":[ 1, 2 ],
-      "end":[ 3 ],
-      "feetOnly":[ 4, 5, 6 ],
-      "normal":[ 7, 8, 9, 10, 11, 12 ]
+      "name":"Strength capacity 2",
+      "begin": [ 225, 27 ],
+      "end": [ 430 ],
+      "feetOnly": [ 416, 403, 5, 291, 261, 74 ],
+      "normal": [ 40, 335, 332, 267, 474, 462, 442 ]
     },
     {
-      "name":"Wooof",
-      "begin":[ 2, 3 ],
-      "end":[ 4 ],
-      "feetOnly":[ 5, 6, 7 ],
-      "normal":[ 8, 9, 10, 11, 12, 13 ]
+      "name":"Broken 40s",
+      "begin": [ 7, 13 ],
+      "end": [ 442 ],
+      "feetOnly": [ 394, 415, 15, 11, 337, 307, 64 ],
+      "normal": [ 29, 335, 279, 267, 474, 454 ]
     },
     {
       "name":"Strength capacity",
@@ -20,6 +20,13 @@
       "end": [ 429 ],
       "feetOnly": [ 415, 402, 4, 336, 290, 260, 73 ],
       "normal": [ 32, 334, 331, 266, 473, 461, 441 ]
+    },
+    {
+      "name":"Green pushers",
+      "begin": [ 225 ],
+      "end": [ 114 ],
+      "feetOnly": [ 245, 413, 315 ],
+      "normal": [ 198, 46, 290, 279, 458, 98 ]
     }
   ]
 }
