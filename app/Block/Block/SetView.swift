@@ -10,6 +10,7 @@ import UIKit
 
 class SetView: ImageScrollView {
 
+    let generator = UIImpactFeedbackGenerator(style: .light)
     var longTouchPoint: CGPoint = CGPoint()
     
     var stickyToggle = false
@@ -133,6 +134,7 @@ class SetView: ImageScrollView {
         for i in 0..<Shapes.count {
             var sh = Shapes[i]
             if sh.path!.contains(point) {
+                generator.impactOccurred()
                 if (sh.opacity == 0) {
                     ImageScrollView.Problem.add(index: i, hold: &sh, type: HoldType.normal, isSticky: stickyToggle)
                 } else {
