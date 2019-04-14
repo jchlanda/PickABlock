@@ -36,17 +36,16 @@ class SetView: ImageScrollView {
         switchControl.addTarget(self, action: #selector(self.switchValueDidChange), for: .valueChanged);
         return switchControl
     }
-    
+
     @objc func switchValueDidChange(sender:UISwitch!){
         stickyChanged = sender.isOn
         stickyToggle = sender.isOn
     }
-    
-    // TODO: JKB: Should problem handle displayig shapes?
+
     func showSetSpecial(index: Int) {
         var shape = Shapes[index]
         let alertController = UIAlertController(title: "Set special:", message: "", preferredStyle: .alert)
-        
+
         let customView = UIView()
         alertController.view.addSubview(customView)
         customView.translatesAutoresizingMaskIntoConstraints = false
@@ -67,49 +66,48 @@ class SetView: ImageScrollView {
         alertController.view.translatesAutoresizingMaskIntoConstraints = false
         alertController.view.heightAnchor.constraint(equalToConstant: 325).isActive = true
         alertController.view.tintColor = Defs.RedStroke
-        
+
         let begin = UIAlertAction(title: "Begin", style: UIAlertAction.Style.default) {
             UIAlertAction in
             if (self.stickyChanged) {
-                ImageScrollView.Problem.setSticky(type: HoldType.begin)
+                self.getBlockProblem().setSticky(type: HoldType.begin)
                 self.stickyChanged = false
             }
-            ImageScrollView.Problem.add(index: index, hold: &shape, type: HoldType.begin, isSticky: self.stickyToggle)
+            self.getBlockProblem().add(index: index, hold: &shape, type: HoldType.begin, isSticky: self.stickyToggle)
         }
         let end = UIAlertAction(title: "End", style: UIAlertAction.Style.default) {
             UIAlertAction in
             if (self.stickyChanged) {
-                ImageScrollView.Problem.setSticky(type: HoldType.end)
+                self.getBlockProblem().setSticky(type: HoldType.end)
                 self.stickyChanged = false
             }
-            ImageScrollView.Problem.add(index: index, hold: &shape, type: HoldType.end, isSticky: self.stickyToggle)
+            self.getBlockProblem().add(index: index, hold: &shape, type: HoldType.end, isSticky: self.stickyToggle)
         }
         let feet = UIAlertAction(title: "Feet only", style: UIAlertAction.Style.default) {
             UIAlertAction in
             if (self.stickyChanged) {
-                ImageScrollView.Problem.setSticky(type: HoldType.feetOnly)
+                self.getBlockProblem().setSticky(type: HoldType.feetOnly)
                 self.stickyChanged = false
             }
-            ImageScrollView.Problem.add(index: index, hold: &shape, type: HoldType.feetOnly, isSticky: self.stickyToggle)
+            self.getBlockProblem().add(index: index, hold: &shape, type: HoldType.feetOnly, isSticky: self.stickyToggle)
         }
         let normal = UIAlertAction(title: "Normal", style: UIAlertAction.Style.default) {
             UIAlertAction in
             if (self.stickyChanged) {
-                ImageScrollView.Problem.setSticky(type: HoldType.normal)
+                self.getBlockProblem().setSticky(type: HoldType.normal)
                 self.stickyChanged = false
             }
-            ImageScrollView.Problem.add(index: index, hold: &shape, type: HoldType.normal, isSticky: self.stickyToggle)
+            self.getBlockProblem().add(index: index, hold: &shape, type: HoldType.normal, isSticky: self.stickyToggle)
         }
         let cancel = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) {
             UIAlertAction in
         }
-        // Add the actions
         alertController.addAction(begin)
         alertController.addAction(end)
         alertController.addAction(feet)
         alertController.addAction(normal)
         alertController.addAction(cancel)
-        
+
         let vc = findViewController()
         vc?.present(alertController, animated: true, completion: nil)
     }
@@ -121,7 +119,7 @@ class SetView: ImageScrollView {
         }
         for i in 0..<Shapes.count {
             if Shapes[i].path!.contains(longTouchPoint) {
-                ImageScrollView.Problem.remove(index: i, hold: &Shapes[i])
+                getBlockProblem().remove(index: i, hold: &Shapes[i])
                 showSetSpecial(index: i)
             }
         }
@@ -172,7 +170,7 @@ class SetView: ImageScrollView {
         }))
         let okAction = UIAlertAction(title: "OK", style: .default, handler: { (pAction) in
             let problemName = textField?.text ?? ""
-            ImageScrollView.Problem.serialize(shapes: &self.Shapes, name: problemName)
+            self.getBlockProblem().serialize(name: problemName, overlays: self.overlayPaths)
             alertController.dismiss(animated: true, completion: nil)
         })
         okAction.isEnabled = false

@@ -65,24 +65,24 @@ class BrowseView: ImageScrollView {
     }
 
     @objc func nextButtonAction(sender: UIButton!) {
-        ImageScrollView.Problem.displayNextKnownProblem(shapes: &Shapes)
+        getBlockProblem().displayNextKnownProblem(view: self.zoomView, shapes: &Shapes)
         setTitle()
     }
 
     @objc func prevButtonAction(sender: UIButton!) {
-        ImageScrollView.Problem.displayPrevKnownProblem(shapes: &Shapes)
+        getBlockProblem().displayPrevKnownProblem(view: self.zoomView, shapes: &Shapes)
         setTitle()
     }
 
     func confirmDelete() {
-        let canDelete = ImageScrollView.Problem.canDeleteProblem()
+        let canDelete = getBlockProblem().canDeleteProblem()
         let alertController = UIAlertController(title: "", message: "", preferredStyle: .alert)
         alertController.view.tintColor = Defs.RedStroke
         
         if canDelete {
             alertController.title = "Are you sure you want to delete a problem?"
             let okAction = UIAlertAction(title: "OK", style: .default, handler: { (pAction) in
-                ImageScrollView.Problem.deleteProblem()
+                self.getBlockProblem().deleteProblem()
                 alertController.dismiss(animated: true, completion: nil)
             })
             alertController.addAction(okAction)
@@ -102,7 +102,7 @@ class BrowseView: ImageScrollView {
     }
 
     func setTitle() {
-        navigationController!.viewControllers[1].navigationItem.title = ImageScrollView.Problem.getKnownProblemName()
+        navigationController!.viewControllers[1].navigationItem.title = getBlockProblem().getKnownProblemName()
     }
 
     //MARK: - Handle main segmented control, next and prev buttons.
@@ -110,7 +110,7 @@ class BrowseView: ImageScrollView {
         switch sender.selectedSegmentIndex {
         case 0:
             var newViewControllers = navigationController!.viewControllers
-            ImageScrollView.Problem.prepareForEdit()
+            getBlockProblem().prepareForEdit()
             newViewControllers[1] = SetViewController()
             newViewControllers[1].view.backgroundColor = Defs.White
             newViewControllers[1].navigationItem.title = "Set"
