@@ -18,9 +18,6 @@ extension UIButton
         button!.frame = CGRect(x: x, y: y, width:width, height:height)
         button!.layer.borderWidth = 1.0
         button!.layer.cornerRadius = 5.0
-        button!.layer.shadowRadius =  3.0
-        button!.layer.shadowColor =  Defs.White.cgColor
-        button!.layer.shadowOpacity =  0.3
     }
 
     override open var isHighlighted: Bool {
@@ -33,7 +30,7 @@ extension UIButton
                 titleLabel?.textColor = Defs.White
             }
             else {
-                backgroundColor = Defs.White
+                backgroundColor = Defs.White.withAlphaComponent(0.5)
                 titleLabel?.textColor = Defs.DarkRed
             }
             super.isHighlighted = newValue
