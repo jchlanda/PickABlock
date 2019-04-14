@@ -196,3 +196,79 @@ class SetView: ImageScrollView {
         }
     }
 }
+
+extension CGPath {
+    var points: [CGPoint] {
+        var arrPoints: [CGPoint] = []
+        ///< applyWithBlock lets us examine each element of the CGPath, and decide what to do
+        self.applyWithBlock { element in
+            switch element.pointee.type
+            {
+            case .moveToPoint, .addLineToPoint:
+                arrPoints.append(element.pointee.points.pointee)
+            case .addQuadCurveToPoint:
+                arrPoints.append(element.pointee.points.pointee)
+                arrPoints.append(element.pointee.points.advanced(by: 1).pointee)
+            case .addCurveToPoint:
+                arrPoints.append(element.pointee.points.pointee)
+                arrPoints.append(element.pointee.points.advanced(by: 1).pointee)
+                arrPoints.append(element.pointee.points.advanced(by: 2).pointee)
+            default:
+                break
+            }
+        }
+        return arrPoints
+    }
+
+    var ramerDouglasPeuckerPoints: [CGPoint] {
+        let inPoints = self.points
+        var outPoints: [CGPoint] = []
+        ramerDouglasPeucker(path: inPoints, startIdx: 0, endIdx: (inPoints.count - 1), epsilon: 0.05, simplified: &outPoints)
+        return outPoints
+    }
+
+    func perpendicularDistance(point: CGPoint, a: CGFloat, c: CGFloat) -> CGFloat {
+        // d = (|a*x0 + b*y0 + c|)/(sqrt(a^2 + b^2))
+        let b: CGFloat = 1.0
+        let dividend = abs(a * point.x + b * point.y + c)
+        let divisor = sqrt(a * a + c * c)
+        let d = dividend/divisor
+
+        return d
+    }
+
+    func ramerDouglasPeucker(path: [CGPoint], startIdx: Int, endIdx: Int, epsilon: CGFloat, simplified: inout [CGPoint]) {
+        if (endIdx - startIdx < 1) {
+            return
+        }
+        let m = (path[startIdx].y - path[endIdx].y)/(path[startIdx].x - path[endIdx].x) * (-1.0)
+        let b = (m * path[startIdx].x + path[startIdx].y) * (-1.0)
+        var dmax: CGFloat = 0.0
+        var dmaxIdx = 0
+        var d: CGFloat = 0.0
+        for i in (startIdx + 1)..<endIdx {
+            d = perpendicularDistance(point: path[i], a: m, c: b)
+            if (d > dmax) {
+                dmaxIdx = i
+                dmax = d
+            }
+        }
+        if (dmax > epsilon) {
+            var bottomAcc: [CGPoint] = []
+            ramerDouglasPeucker(path: path, startIdx: startIdx, endIdx: dmaxIdx - 1, epsilon: epsilon, simplified: &bottomAcc)
+            var topAcc: [CGPoint] = []
+            ramerDouglasPeucker(path: path, startIdx: dmaxIdx, endIdx: endIdx,  epsilon: epsilon, simplified: &topAcc)
+            simplified.removeAll()
+            simplified.append(contentsOf: bottomAcc)
+            simplified.append(contentsOf: topAcc)
+            if (simplified.count < 2) {
+                return
+            }
+        } else {
+            simplified.removeAll()
+            simplified.append(path[startIdx])
+            simplified.append(path[endIdx])
+        }
+        return
+    }
+}
