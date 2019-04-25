@@ -177,6 +177,17 @@ class BlockProblem {
         }
     }
 
+    func stringifyCurrentProblem() -> String {
+        do {
+            let encoder = JSONEncoder()
+            let jsonData = try encoder.encode(currentProblem)
+            return String(data: jsonData, encoding: String.Encoding.utf8)!
+        }
+        catch {
+            return "Failed to stringify current problem."
+        }
+    }
+
     func setSticky(type: HoldType) {
         stickyToggle.value = type
     }
