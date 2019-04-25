@@ -9,12 +9,12 @@
 import UIKit
 
 class BrowseViewController: ViewController {
+  
+  override func viewDidLoad() {
+    self.imageScrollView = BrowseView(frame: self.view.bounds)
+    self.image = UIImage(named: "AlienBlockAR2")!
     
-     override func viewDidLoad() {
-        self.imageScrollView = BrowseView(frame: self.view.bounds)
-        self.image = UIImage(named: "AlienBlockAR2")!
-        
-        super.viewDidLoad()
-    }
+    super.viewDidLoad()
+  }
 }
 
