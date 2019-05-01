@@ -58,10 +58,8 @@ class SetView: ImageScrollView {
     superview?.addSubview(redoButton)
     superview?.addSubview(undoButton)
     setColorPickerVisibility(isHidden: true)
-    
-    getBlockProblem().flushSaved(shapes: &Shapes)
   }
-  
+
   @objc func redoButtonAction(sender: UIButton!) {
     if (undoStack.count == 0) {
       return

@@ -299,29 +299,6 @@ class BlockProblem {
     return knownProblems[knownProblemsIdx].name
   }
   
-  func flushSaved(shapes: inout [CAShapeLayer]) {
-    for b in currentProblem.begin {
-      displayHold(type: HoldType.begin, hold: &shapes[b])
-    }
-    for e in currentProblem.end {
-      displayHold(type: HoldType.end, hold: &shapes[e])
-    }
-    for f in currentProblem.feetOnly {
-      displayHold(type: HoldType.feetOnly, hold: &shapes[f])
-    }
-    for n in currentProblem.normal {
-      displayHold(type: HoldType.normal, hold: &shapes[n])
-    }
-  }
-  
-  // Should the original problem be removed?
-  func prepareForEdit() {
-    currentProblem.begin = knownProblems[knownProblemsIdx].begin
-    currentProblem.end = knownProblems[knownProblemsIdx].end
-    currentProblem.feetOnly = knownProblems[knownProblemsIdx].feetOnly
-    currentProblem.normal = knownProblems[knownProblemsIdx].normal
-  }
-  
   func consumeColoredOverlayPaths(problem: inout Problem, overlayShapePath: [ColoredOverlayPath]) {
     for o in overlayShapePath {
       var path: [[Int]] = []
