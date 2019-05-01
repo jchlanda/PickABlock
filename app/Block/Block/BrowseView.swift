@@ -49,6 +49,8 @@ class BrowseView: ImageScrollView {
   
   override func display(_ image: UIImage) {
     super.display(image)
+    // TODO: JKB: What if there is no known problems?
+    getBlockProblem().displayKnownProblem(view: self.zoomView, problemIdx: 0, shapes: &Shapes)
     mainSegment.addTarget(self, action: #selector(BrowseView.mainSegmentedControlHandler(_:)), for: .valueChanged)
     superview?.addSubview(mainSegment)
     
@@ -105,14 +107,15 @@ class BrowseView: ImageScrollView {
   //MARK: - Handle main segmented control, next and prev buttons.
   @objc func mainSegmentedControlHandler(_ sender: UISegmentedControl) {
     switch sender.selectedSegmentIndex {
-    case 0:
+    case 0: // Edit
       var newViewControllers = navigationController!.viewControllers
-      getBlockProblem().prepareForEdit()
-      newViewControllers[1] = SetViewController()
-      newViewControllers[1].view.backgroundColor = Defs.White
-      newViewControllers[1].navigationItem.title = "Set"
+      let newView = SetViewController()
+      newView.view.backgroundColor = Defs.White
+      newView.navigationItem.title = "Set"
+      newView.setEditState(knownProblemsIdx: getBlockProblem().getKnownProblemIdx())
+      newViewControllers[1] = newView
       navigationController!.setViewControllers(newViewControllers, animated: true)
-    case 1:
+    case 1: // Delete
       confirmDelete()
     default:
       break

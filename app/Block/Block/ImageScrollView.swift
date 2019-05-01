@@ -58,6 +58,10 @@ class ImageScrollView: UIScrollView, UIScrollViewDelegate {
     return Problem
   }
   
+  func setEditState(knownProblemsIdx: Int) {
+    getBlockProblem().displayKnownProblem(view: self.zoomView, problemIdx: knownProblemsIdx, shapes: &Shapes)
+  }
+
   override func layoutSubviews() {
     super.layoutSubviews()
     

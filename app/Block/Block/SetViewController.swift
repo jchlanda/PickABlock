@@ -16,5 +16,9 @@ class SetViewController: ViewController {
     
     super.viewDidLoad()
   }
+
+  func setEditState(knownProblemsIdx: Int) {
+    self.imageScrollView.setEditState(knownProblemsIdx: knownProblemsIdx)
+  }
 }
 
