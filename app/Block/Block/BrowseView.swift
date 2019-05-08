@@ -42,7 +42,7 @@ class BrowseView: ImageScrollView {
   
   let navigationController = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController
   
-  lazy var mainSegment: UISegmentedControl = setUpSegmentedControl(elements: ["Edit", "Delete"], yOffset: 50)
+  lazy var mainSegment: UISegmentedControl = Defs.setUpSegmentedControl(frame: self.frame, elements: ["Edit", "Delete"], yOffset: 50)
   
   var nextButton = UIButton()
   var prevButton = UIButton()

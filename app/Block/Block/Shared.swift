@@ -49,4 +49,20 @@ struct Defs {
     
     return UIColor(red: red, green: green, blue: blue, alpha: alpha)
   }
+  
+  static func setUpSegmentedControl(frame: CGRect, elements: [String], yOffset: CGFloat, isHidden: Bool = false) -> UISegmentedControl {
+    let control = UISegmentedControl(items: elements)
+    control.layer.borderColor = Defs.DarkRed.cgColor
+    control.tintColor = Defs.DarkRed
+    control.backgroundColor = Defs.White.withAlphaComponent(0.5)
+    control.frame = CGRect(x: frame.minX + 10, y: frame.maxY - yOffset,
+                           width: frame.maxX - 20, height: 40)
+    control.isHidden = isHidden
+    control.layer.cornerRadius = 15.0
+    control.layer.borderWidth = 1.0
+    control.layer.masksToBounds = true
+    control.isMomentary = true
+    
+    return control
+  }
 }

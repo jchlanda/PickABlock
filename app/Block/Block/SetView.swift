@@ -20,8 +20,8 @@ class SetView: ImageScrollView {
   var overlayPath = UIBezierPath()
   var overlayPaths: [ColoredOverlayPath] = []
   
-  lazy var mainSegment: UISegmentedControl = setUpSegmentedControl(elements: ["Cancel", "Submit"], yOffset: 50)
-  lazy var colorSegment: UISegmentedControl = setUpSegmentedControl(elements: [""], yOffset: 100)
+  lazy var mainSegment: UISegmentedControl = Defs.setUpSegmentedControl(frame: self.frame, elements: ["Cancel", "Submit"], yOffset: 50)
+  lazy var colorSegment: UISegmentedControl = Defs.setUpSegmentedControl(frame: self.frame, elements: [""], yOffset: 100)
   
   var slider = UISlider()
   
@@ -275,7 +275,7 @@ class SetView: ImageScrollView {
   @objc func alertTextFieldDidChange(field: UITextField){
     let vc = findViewController()
     let alertController:UIAlertController = vc?.presentedViewController as! UIAlertController;
-    let textField :UITextField  = alertController.textFields![0];
+    let textField: UITextField  = alertController.textFields![0];
     let addAction: UIAlertAction = alertController.actions[1];
     addAction.isEnabled = (textField.text?.count)! >= 5;
     
