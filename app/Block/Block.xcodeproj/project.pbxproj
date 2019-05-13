@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3B32D7D322387A2B0004911B /* BlockProblem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B32D7D222387A2B0004911B /* BlockProblem.swift */; };
+		0B36E675227A41050078A04E /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B36E674227A41050078A04E /* SettingsViewController.swift */; };
+		3B32D7D322387A2B0004911B /* BlockProblemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B32D7D222387A2B0004911B /* BlockProblemManager.swift */; };
 		3B32D7D5223D28360004911B /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B32D7D4223D28360004911B /* Shared.swift */; };
 		3B32D7DB223E5DB60004911B /* ImageScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B32D7DA223E5DB60004911B /* ImageScrollView.swift */; };
 		3B32D7DD223FF1A70004911B /* BrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B32D7DC223FF1A70004911B /* BrowseView.swift */; };
@@ -24,7 +25,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3B32D7D222387A2B0004911B /* BlockProblem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockProblem.swift; sourceTree = "<group>"; };
+		0B36E674227A41050078A04E /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		3B32D7D222387A2B0004911B /* BlockProblemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockProblemManager.swift; sourceTree = "<group>"; };
 		3B32D7D4223D28360004911B /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared.swift; sourceTree = "<group>"; };
 		3B32D7DA223E5DB60004911B /* ImageScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageScrollView.swift; sourceTree = "<group>"; };
 		3B32D7DC223FF1A70004911B /* BrowseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseView.swift; sourceTree = "<group>"; };
@@ -76,10 +78,11 @@
 				3B32D7E0224018800004911B /* ViewController.swift */,
 				3B3D112F2236F5F500188EF0 /* SetViewController.swift */,
 				3B32D7DE224014420004911B /* BrowseViewController.swift */,
+				0B36E674227A41050078A04E /* SettingsViewController.swift */,
 				3B32D7DA223E5DB60004911B /* ImageScrollView.swift */,
 				3B3D11412236F7B500188EF0 /* SetView.swift */,
 				3B32D7DC223FF1A70004911B /* BrowseView.swift */,
-				3B32D7D222387A2B0004911B /* BlockProblem.swift */,
+				3B32D7D222387A2B0004911B /* BlockProblemManager.swift */,
 				3B9B252822370AB300D03D34 /* ShapesCoords.swift */,
 				3B32D7D4223D28360004911B /* Shared.swift */,
 				3B3D11312236F5F500188EF0 /* Main.storyboard */,
@@ -166,6 +169,7 @@
 			files = (
 				3B32D7DD223FF1A70004911B /* BrowseView.swift in Sources */,
 				3B32D7D5223D28360004911B /* Shared.swift in Sources */,
+				0B36E675227A41050078A04E /* SettingsViewController.swift in Sources */,
 				3B32D7E1224018800004911B /* ViewController.swift in Sources */,
 				3B32D7DB223E5DB60004911B /* ImageScrollView.swift in Sources */,
 				3B3D11422236F7B500188EF0 /* SetView.swift in Sources */,
@@ -173,7 +177,7 @@
 				3B3D112E2236F5F500188EF0 /* AppDelegate.swift in Sources */,
 				3B32D7DF224014420004911B /* BrowseViewController.swift in Sources */,
 				3B9B252922370AB300D03D34 /* ShapesCoords.swift in Sources */,
-				3B32D7D322387A2B0004911B /* BlockProblem.swift in Sources */,
+				3B32D7D322387A2B0004911B /* BlockProblemManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
