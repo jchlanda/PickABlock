@@ -159,34 +159,34 @@ class SetView: ImageScrollView {
     let begin = UIAlertAction(title: "Begin", style: UIAlertAction.Style.default) {
       UIAlertAction in
       if (self.stickyChanged) {
-        self.getBlockProblem().setSticky(type: HoldType.begin)
+        self.getBlockProblemManager().setSticky(type: HoldType.begin)
         self.stickyChanged = false
       }
-      self.getBlockProblem().add(index: index, hold: &shape, type: HoldType.begin, isSticky: self.stickyToggle)
+      self.getBlockProblemManager().add(index: index, hold: &shape, type: HoldType.begin, isSticky: self.stickyToggle)
     }
     let end = UIAlertAction(title: "End", style: UIAlertAction.Style.default) {
       UIAlertAction in
       if (self.stickyChanged) {
-        self.getBlockProblem().setSticky(type: HoldType.end)
+        self.getBlockProblemManager().setSticky(type: HoldType.end)
         self.stickyChanged = false
       }
-      self.getBlockProblem().add(index: index, hold: &shape, type: HoldType.end, isSticky: self.stickyToggle)
+      self.getBlockProblemManager().add(index: index, hold: &shape, type: HoldType.end, isSticky: self.stickyToggle)
     }
     let feet = UIAlertAction(title: "Feet only", style: UIAlertAction.Style.default) {
       UIAlertAction in
       if (self.stickyChanged) {
-        self.getBlockProblem().setSticky(type: HoldType.feetOnly)
+        self.getBlockProblemManager().setSticky(type: HoldType.feetOnly)
         self.stickyChanged = false
       }
-      self.getBlockProblem().add(index: index, hold: &shape, type: HoldType.feetOnly, isSticky: self.stickyToggle)
+      self.getBlockProblemManager().add(index: index, hold: &shape, type: HoldType.feetOnly, isSticky: self.stickyToggle)
     }
     let normal = UIAlertAction(title: "Normal", style: UIAlertAction.Style.default) {
       UIAlertAction in
       if (self.stickyChanged) {
-        self.getBlockProblem().setSticky(type: HoldType.normal)
+        self.getBlockProblemManager().setSticky(type: HoldType.normal)
         self.stickyChanged = false
       }
-      self.getBlockProblem().add(index: index, hold: &shape, type: HoldType.normal, isSticky: self.stickyToggle)
+      self.getBlockProblemManager().add(index: index, hold: &shape, type: HoldType.normal, isSticky: self.stickyToggle)
     }
     let cancel = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) {
       UIAlertAction in
@@ -208,7 +208,7 @@ class SetView: ImageScrollView {
     }
     for i in 0..<Shapes.count {
       if Shapes[i].path!.contains(longTouchPoint) {
-        getBlockProblem().remove(index: i, hold: &Shapes[i])
+        getBlockProblemManager().remove(index: i, hold: &Shapes[i])
         showSetSpecial(index: i)
       }
     }
@@ -223,9 +223,9 @@ class SetView: ImageScrollView {
       if sh.path!.contains(point) {
         generator.impactOccurred()
         if (sh.opacity == 0) {
-          getBlockProblem().add(index: i, hold: &sh, type: HoldType.normal, isSticky: stickyToggle)
+          getBlockProblemManager().add(index: i, hold: &sh, type: HoldType.normal, isSticky: stickyToggle)
         } else {
-          getBlockProblem().remove(index: i, hold: &sh)
+          getBlockProblemManager().remove(index: i, hold: &sh)
         }
       }
     }
@@ -330,7 +330,7 @@ class SetView: ImageScrollView {
     let okAction = UIAlertAction(title: "OK", style: .default, handler: { (pAction) in
       self.setColorPickerVisibility(isHidden: true)
       let problemName = textField?.text ?? ""
-      self.getBlockProblem().serialize(name: problemName, overlays: self.overlayPaths)
+      self.getBlockProblemManager().serialize(name: problemName, overlays: self.overlayPaths)
       alertController.dismiss(animated: true, completion: nil)
     })
     okAction.isEnabled = false
@@ -344,7 +344,7 @@ class SetView: ImageScrollView {
   @objc func mainSegmentedControlHandler(_ sender: UISegmentedControl) {
     switch sender.selectedSegmentIndex {
     case 0: // Cancel
-      getBlockProblem().clean(oldIdx: getBlockProblem().getKnownProblemIdx(), shapes: &Shapes)
+      getBlockProblemManager().clean(oldIdx: getBlockProblemManager().getKnownProblemIdx(), shapes: &Shapes)
       setColorPickerVisibility(isHidden: true)
       cleanOverlays()
       overlayMode = false

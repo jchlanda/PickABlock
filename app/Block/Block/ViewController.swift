@@ -10,16 +10,20 @@ import UIKit
 
 class ViewController: UIViewController {
   
+  var BPM: BlockProblemManager = BlockProblemManager.shared
+  
   var imageScrollView: ImageScrollView!
   var image: UIImage!
   
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    self.view.addSubview(self.imageScrollView)
-    self.layoutImageScrollView()
-    
-    self.imageScrollView.display(image)
+    if ((self.imageScrollView) != nil) {
+      self.view.addSubview(self.imageScrollView)
+      self.layoutImageScrollView()
+      
+      self.imageScrollView.display(image)
+    }
   }
   
   func layoutImageScrollView() {

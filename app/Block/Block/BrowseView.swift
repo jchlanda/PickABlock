@@ -50,7 +50,7 @@ class BrowseView: ImageScrollView {
   override func display(_ image: UIImage) {
     super.display(image)
     // TODO: JKB: What if there is no known problems?
-    getBlockProblem().displayKnownProblem(view: self.zoomView, problemIdx: 0, shapes: &Shapes)
+    getBlockProblemManager().displayKnownProblem(view: self.zoomView, problemIdx: 0, shapes: &Shapes)
     mainSegment.addTarget(self, action: #selector(BrowseView.mainSegmentedControlHandler(_:)), for: .valueChanged)
     superview?.addSubview(mainSegment)
     
@@ -63,25 +63,26 @@ class BrowseView: ImageScrollView {
     superview?.addSubview(prevButton)
   }
   
-  @objc func nextButtonAction(sender: UIButton!) {
-    getBlockProblem().displayNextKnownProblem(view: self.zoomView, shapes: &Shapes)
+  @objc func nextButtonAction() {
+    getBlockProblemManager().displayNextKnownProblem(view: self.zoomView, shapes: &Shapes)
     setTitle()
   }
   
-  @objc func prevButtonAction(sender: UIButton!) {
-    getBlockProblem().displayPrevKnownProblem(view: self.zoomView, shapes: &Shapes)
+  @objc func prevButtonAction() {
+    getBlockProblemManager().displayPrevKnownProblem(view: self.zoomView, shapes: &Shapes)
     setTitle()
   }
   
   func confirmDelete() {
-    let canDelete = getBlockProblem().canDeleteProblem()
+    let canDelete = getBlockProblemManager().canDeleteProblem()
     let alertController = UIAlertController(title: "", message: "", preferredStyle: .alert)
     alertController.view.tintColor = Defs.RedStroke
     
     if canDelete {
       alertController.title = "Are you sure you want to delete a problem?"
       let okAction = UIAlertAction(title: "OK", style: .default, handler: { (pAction) in
-        self.getBlockProblem().deleteProblem()
+        self.getBlockProblemManager().deleteProblem()
+        self.nextButtonAction()
         alertController.dismiss(animated: true, completion: nil)
       })
       alertController.addAction(okAction)
@@ -101,7 +102,7 @@ class BrowseView: ImageScrollView {
   }
   
   func setTitle() {
-    navigationController!.viewControllers[1].navigationItem.title = getBlockProblem().getKnownProblemName()
+    navigationController!.viewControllers[1].navigationItem.title = getBlockProblemManager().getKnownProblemName()
   }
   
   //MARK: - Handle main segmented control, next and prev buttons.
@@ -112,7 +113,7 @@ class BrowseView: ImageScrollView {
       let newView = SetViewController()
       newView.view.backgroundColor = Defs.White
       newView.navigationItem.title = "Set"
-      newView.setEditState(knownProblemsIdx: getBlockProblem().getKnownProblemIdx())
+      newView.setEditState(knownProblemsIdx: getBlockProblemManager().getKnownProblemIdx())
       newViewControllers[1] = newView
       navigationController!.setViewControllers(newViewControllers, animated: true)
     case 1: // Delete

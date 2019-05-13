@@ -1,5 +1,5 @@
 //
-//  BlockProblem.swift
+//  BlockProblemManager.swift
 //  Block
 //
 //  Created by Jakub on 12/03/2019.
@@ -24,14 +24,10 @@ struct OverlayColorPair : Codable {
 }
 
 struct KnownProblems : Codable {
-  var knownProblems: [Problem]
-}
-
-struct UserLocalProblems : Codable {
   init() {
-    self.userLocalProblems = []
+    self.knownProblems = []
   }
-  var userLocalProblems: [Problem]
+  var knownProblems: [Problem]
 }
 
 struct Problem : Codable {
@@ -85,16 +81,20 @@ struct Sticky {
   }
 }
 
-class BlockProblem {
+// TODO: JKB: Why is this instantiated on every view load?
+class BlockProblemManager {
+  static let shared = BlockProblemManager()
+
   var stickyToggle: Sticky = Sticky()
   
   var knownProblems: [Problem] = []
   var knownOverlays: [[CAShapeLayer]] = []
   let knownProblemsFile = Bundle.main.path(forResource: "KnownProblems", ofType: "json")!
   var knownProblemsIdx: Int = 0
-  var ulp: UserLocalProblems = UserLocalProblems()
+  
+  var userLocalStartIdx: Int = 0
   var userLocalFile = URL.documentsURL.appendingPathComponent("UserLocalProblems.json")
-  var userLocalStartIdx = 0
+  
   var currentProblem: Problem = Problem()
   
   init() {
@@ -104,8 +104,7 @@ class BlockProblem {
     if !fileManager.fileExists(atPath: userLocalFile.path) {
       FileManager.default.createFile(atPath: userLocalFile.path, contents: nil, attributes: nil)
     } else {
-      ulp = loadUserLocalProblems(path: userLocalFile.path)
-      knownProblems.append(contentsOf: ulp.userLocalProblems)
+      knownProblems.append(contentsOf: loadUserLocalProblems(path: userLocalFile.path))
     }
     
   }
@@ -122,19 +121,23 @@ class BlockProblem {
     }
   }
   
-  func loadUserLocalProblems(path: String) -> UserLocalProblems {
+  func loadUserLocalProblems(path: String) -> [Problem] {
     do {
       let contents = try NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue)
       if (contents == "") {
-        return UserLocalProblems()
+        return []
       }
       let data = try Data(contentsOf: URL(fileURLWithPath: path))
       let decoder = JSONDecoder()
-      let jsonData = try decoder.decode(UserLocalProblems.self, from: data)
+      
+      let jsonData = try decoder.decode([Problem].self, from: data)
       return jsonData
+      
+      //      let jsonData = try decoder.decode(KnownProblems.self, from: data)
+      //      return jsonData.knownProblems
     } catch {
       print("error:\(error)")
-      return UserLocalProblems()
+      return []
     }
   }
   
@@ -166,25 +169,32 @@ class BlockProblem {
     }
   }
   
-  func saveUserLocalProblems(path: URL, problems: UserLocalProblems) {
+  // Both inclusive
+  func saveUserLocalProblems(path: URL, startIdx: Int, endIdx: Int) {
+    let data = serializeProblems(startIdx: startIdx, endIdx: endIdx)
     do {
-      let encoder = JSONEncoder()
-      let jsonData = try encoder.encode(problems)
-      try jsonData.write(to: path)
+      try data.write(to: path)
     }
     catch {
       print("error:\(error)")
     }
   }
   
-  func stringifyCurrentProblem() -> String {
+  // Both inclusive.
+  func stringifyProblems(startIdx: Int, endIdx: Int) -> String {
+    let data = serializeProblems(startIdx: startIdx, endIdx: endIdx)
+    return String(data: data, encoding: String.Encoding.utf8)!
+  }
+  
+  // Both inclusive.
+  func serializeProblems(startIdx: Int, endIdx: Int) -> Data {
     do {
-      let encoder = JSONEncoder()
-      let jsonData = try encoder.encode(currentProblem)
-      return String(data: jsonData, encoding: String.Encoding.utf8)!
+      // Can't form a range if start == end.
+      return try JSONEncoder().encode(startIdx == endIdx ? [knownProblems[startIdx]] : Array(knownProblems[startIdx...endIdx]))
     }
     catch {
-      return "Failed to stringify current problem."
+      print("error:\(error)")
+      return Data()
     }
   }
   
@@ -233,6 +243,18 @@ class BlockProblem {
   
   func getKnownProblemIdx() -> Int {
     return knownProblemsIdx
+  }
+  
+  func getUserLocalStartIdx() -> Int {
+    return userLocalStartIdx
+  }
+  
+  func getNumKnownProblems() -> Int {
+    return knownProblems.count
+  }
+  
+  func hasUserLocalProblems() -> Bool {
+    return userLocalStartIdx < knownProblems.count
   }
   
   func displayHold(type: HoldType, hold: inout CAShapeLayer) {
@@ -313,8 +335,7 @@ class BlockProblem {
     currentProblem.name = name
     consumeColoredOverlayPaths(problem: &currentProblem, overlayShapePath: overlays)
     knownProblems.append(currentProblem)
-    ulp.userLocalProblems.append(currentProblem)
-    saveUserLocalProblems(path: userLocalFile, problems: ulp)
+    saveUserLocalProblems(path: userLocalFile, startIdx: userLocalStartIdx, endIdx: knownProblems.count - 1)
   }
   
   func clean(oldIdx: Int, shapes: inout [CAShapeLayer]) {
@@ -351,6 +372,17 @@ class BlockProblem {
   func deleteProblem() {
     if let idx = knownProblems.firstIndex(where: { $0 == currentProblem }) {
       knownProblems.remove(at: idx)
+      // No more user local problems, clear the file.
+      if (knownProblems.count >= userLocalStartIdx) {
+        do {
+          try Data().write(to: userLocalFile)
+        } catch {
+          print(error)
+          return
+        }
+      } else {
+        saveUserLocalProblems(path: userLocalFile, startIdx: userLocalStartIdx, endIdx: knownProblems.count - 1)
+      }
       for o in knownOverlays[idx] {
         o.isHidden = true
       }
@@ -361,10 +393,6 @@ class BlockProblem {
       else {
         knownProblemsIdx = knownProblems.count - 1
       }
-    }
-    if let idx = ulp.userLocalProblems.firstIndex(where: { $0 == currentProblem }) {
-      ulp.userLocalProblems.remove(at: idx)
-      saveUserLocalProblems(path: userLocalFile, problems: ulp)
     }
   }
 }
