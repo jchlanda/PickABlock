@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+import argparse
 import datetime
 import sys
 import os.path
@@ -34,7 +35,7 @@ class SvgParser(object):
   def parse_svg(self):
     self.header()
     shapesCoords = []
-    paths, attributes = svg2paths(self.inFileName)
+    _, attributes = svg2paths(self.inFileName)
     dAttribute = attributes[0]['d']
     dAttribute = re.sub(r"\s*[0-9]*\.[0-9]*,[0-9]*\.[0-9]*\s*C", "", dAttribute)
     dAttribute = re.sub(r"\s*Z", "", dAttribute)
@@ -122,20 +123,24 @@ class SvgParser(object):
     self.output("//  }")
 
 def main():
-  if len(sys.argv) < 2 and len(sys.argv) < 3:
-    print("Usage: svgparser <input_file> <output_file>\n")
-    print("       output_file is optional,"
-          "       if not set, result is printed to std I\O.\n")
-    return
-  inFile = sys.argv[1]
-  if not os.path.exists(inFile):
-    print("Input file \"{0}\" does not exist.\n".format(inFile))
-    return
-  outFile = None
-  if len(sys.argv) == 3:
-    outFile = sys.argv[2]
+  parser = argparse.ArgumentParser()
+  parser.add_argument('-i', '--input',
+                      help = 'Input svg file.')
+  parser.add_argument('-o', '--output',
+                      action='store', nargs='?',
+                      help='Filename to output generated swift code. If not '
+                      'provided `ShapesCoords.swift` will be used (which is '
+                      'what Block expects).',
+                      default='ShapesCoords.swift')
+  if len(sys.argv) == 1:
+    parser.print_help()
+    sys.exit(1)
+  args = parser.parse_args() 
+  if not os.path.exists(args.input):
+    print("Input file \"{0}\" does not exist.\n".format(args.input))
+    sys.exit(1)
 
-  SP = SvgParser(inFile, outFile)
+  SP = SvgParser(args.input, args.output)
   SP.parse_svg()
 
 
