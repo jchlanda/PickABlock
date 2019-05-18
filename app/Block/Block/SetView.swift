@@ -20,8 +20,8 @@ class SetView: ImageScrollView {
   var overlayPath = UIBezierPath()
   var overlayPaths: [ColoredOverlayPath] = []
   
-  lazy var mainSegment: UISegmentedControl = Defs.setUpSegmentedControl(frame: self.frame, elements: ["Cancel", "Submit"], yOffset: 50)
-  lazy var colorSegment: UISegmentedControl = Defs.setUpSegmentedControl(frame: self.frame, elements: [""], yOffset: 100)
+  lazy var mainSegment: UISegmentedControl = Defs.setUpSegmentedControl(frame: self.frame, elements: ["Cancel", "Submit"], yOffset: yOffset)
+  lazy var colorSegment: UISegmentedControl = Defs.setUpSegmentedControl(frame: self.frame, elements: [""], yOffset: yOffset + 50)
   
   var slider = UISlider()
   
@@ -45,11 +45,11 @@ class SetView: ImageScrollView {
     let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressHandler))
     superview?.addGestureRecognizer(recognizer)
     
-    redoButton.setUpLayer(button: redoButton, displayName: ">", x: Int(frame.maxX - 10 - 35), y: Int(frame.maxY - 100), width: 35, height: 40)
+    redoButton.setUpLayer(button: redoButton, displayName: ">", x: Int(frame.maxX - 10 - 35), y: Int(frame.maxY - yOffset - 50), width: 35, height: 40)
     redoButton.layer.cornerRadius = 15.0
     redoButton.layer.borderWidth = 1.0
     redoButton.layer.masksToBounds = true
-    undoButton.setUpLayer(button: undoButton, displayName: "<", x: Int(frame.minX + 10), y: Int(frame.maxY - 100), width: 35, height: 40)
+    undoButton.setUpLayer(button: undoButton, displayName: "<", x: Int(frame.minX + 10), y: Int(frame.maxY - yOffset - 50), width: 35, height: 40)
     undoButton.layer.cornerRadius = 15.0
     undoButton.layer.borderWidth = 1.0
     undoButton.layer.masksToBounds = true
@@ -99,7 +99,7 @@ class SetView: ImageScrollView {
   
   func setUpSlider() -> UISlider {
     let slider = UISlider()
-    slider.frame = CGRect(x: frame.minX + 10 + 35, y: frame.maxY - 100,
+    slider.frame = CGRect(x: frame.minX + 10 + 35, y: frame.maxY - yOffset - 50,
                           width: frame.maxX - 2 * 10 - 2 * 35, height: 40)
     
     slider.minimumTrackTintColor = Defs.White.withAlphaComponent(0)
@@ -201,15 +201,16 @@ class SetView: ImageScrollView {
     vc?.present(alertController, animated: true, completion: nil)
   }
   
-  //MARK: - Handle Tap and Zoom.
   @objc func longPressHandler(sender: UILongPressGestureRecognizer) {
     if (sender.state != UIGestureRecognizer.State.began) {
       return
     }
     for i in 0..<Shapes.count {
       if Shapes[i].path!.contains(longTouchPoint) {
+        generator.impactOccurred()
         getBlockProblemManager().remove(index: i, hold: &Shapes[i])
         showSetSpecial(index: i)
+        return
       }
     }
   }
@@ -271,14 +272,12 @@ class SetView: ImageScrollView {
     }
   }
   
-  // MARK: - Show submit alert and text field observer.
   @objc func alertTextFieldDidChange(field: UITextField){
     let vc = findViewController()
     let alertController:UIAlertController = vc?.presentedViewController as! UIAlertController;
     let textField: UITextField  = alertController.textFields![0];
     let addAction: UIAlertAction = alertController.actions[1];
-    addAction.isEnabled = (textField.text?.count)! >= 5;
-    
+    addAction.isEnabled = (textField.text?.count)! >= 1;
   }
   
   func setColorPickerVisibility(isHidden: Bool) {

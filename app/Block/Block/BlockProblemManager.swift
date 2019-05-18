@@ -22,6 +22,12 @@ struct OverlayColorPair : Codable {
   var path: [[Int]]
   
 }
+extension OverlayColorPair: Equatable {
+  static func == (lhs: OverlayColorPair, rhs: OverlayColorPair) -> Bool {
+    return lhs.color == rhs.color &&
+      lhs.path == rhs.path
+  }
+}
 
 struct KnownProblems : Codable {
   init() {
@@ -55,14 +61,14 @@ struct Problem : Codable {
   var normal: [Int]
   var overlays: [OverlayColorPair]
 }
-
 extension Problem: Equatable {
   static func == (lhs: Problem, rhs: Problem) -> Bool {
     return lhs.name == rhs.name &&
       lhs.begin == rhs.begin &&
       lhs.end == rhs.end &&
       lhs.feetOnly == rhs.feetOnly &&
-      lhs.normal == rhs.normal
+      lhs.normal == rhs.normal &&
+      lhs.overlays == rhs.overlays
   }
 }
 
@@ -81,7 +87,6 @@ struct Sticky {
   }
 }
 
-// TODO: JKB: Why is this instantiated on every view load?
 class BlockProblemManager {
   static let shared = BlockProblemManager()
 
@@ -295,6 +300,80 @@ class BlockProblemManager {
       currentProblem.feetOnly.remove(at: i)
       return
     }
+  }
+  
+  func containsProblem(problem: Problem, array: ArraySlice<Problem>) -> Int {
+    for (idx, p) in array.enumerated() {
+      if (p == problem) {
+        return idx
+      }
+    }
+    return -1
+  }
+  
+  // TODO: JKB: Return a message (added x problems, filtered x duplicates, errror).
+  func addManually(problems: String) -> String {
+    do {
+      let decoder = JSONDecoder()
+      let data = Data(problems.utf8)
+      let manualProblems = try decoder.decode([Problem].self, from: data)
+      var appended = 0
+      for p in manualProblems {
+        if (-1 == containsProblem(problem: p, array: knownProblems[0...knownProblems.count - 1])) {
+          knownProblems.append(p)
+          appended += 1
+        }
+      }
+      if (appended > 0) {
+        saveUserLocalProblems(path: userLocalFile, startIdx: userLocalStartIdx, endIdx: knownProblems.count - 1)
+        var message = "Added " + String(appended) + " new problem"
+        if (appended > 1) {
+          message += "s."
+        } else {
+          message += "."
+        }
+        return message
+      } else {
+        return "No new problems appended."
+      }
+    } catch {
+      return error.localizedDescription
+    }
+  }
+  
+  // Assumes there are no duplicates in built in problems.
+  func purgeDuplicates() -> Int {
+    var toDelete: [Int] = []
+    // Check if udp duplicates bip.
+    for (idx, p) in knownProblems[userLocalStartIdx...knownProblems.count - 1].enumerated() {
+      for knownP in knownProblems[0...userLocalStartIdx - 1] {
+        if (p == knownP) {
+          toDelete.append(idx + userLocalStartIdx)
+        }
+      }
+    }
+    // Check if there are duplicates in udps.
+    if (userLocalStartIdx < knownProblems.count - 1) {
+      for (idx, p) in knownProblems[userLocalStartIdx...knownProblems.count - 2].enumerated() {
+        for newP in knownProblems[idx + userLocalStartIdx + 1...knownProblems.count - 1] {
+          if (p == newP) {
+            toDelete.append(idx + userLocalStartIdx)
+          }
+        }
+      }
+    }
+    if (toDelete.count == 0) {
+      return 0
+    }
+    
+    toDelete.sort()
+    for idx in toDelete.reversed() {
+      knownProblems.remove(at: idx)
+    }
+    knownProblemsIdx = 0
+    saveUserLocalProblems(path: userLocalFile, startIdx: userLocalStartIdx, endIdx: knownProblems.count - 1)
+
+    return toDelete.count
   }
   
   func add(index: Int, hold: inout CAShapeLayer, type: HoldType, isSticky: Bool) {

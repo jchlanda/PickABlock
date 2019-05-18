@@ -13,6 +13,9 @@ class ImageScrollView: UIScrollView, UIScrollViewDelegate {
   var Shapes: [CAShapeLayer] = []
   var Paths: [UIBezierPath] = []
   
+  let navigationController = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController
+  lazy var yOffset = UIApplication.shared.statusBarFrame.height + (navigationController?.navigationBar.frame.height)!
+  
   var zoomView: UIImageView!
   
   lazy var zoomingTap: UITapGestureRecognizer = {

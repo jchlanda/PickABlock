@@ -8,22 +8,10 @@
 
 import UIKit
 
-class SettingsViewController: ViewController {
-  let labelOne: UILabel = {
-    let label = UILabel()
-    label.text = "Scroll Top"
-    label.backgroundColor = .red
-    label.translatesAutoresizingMaskIntoConstraints = false
-    return label
-  }()
+class SettingsViewController: ViewController, UITextViewDelegate {
   
-  let labelTwo: UILabel = {
-    let label = UILabel()
-    label.text = "Scroll Bottom"
-    label.backgroundColor = .green
-    label.translatesAutoresizingMaskIntoConstraints = false
-    return label
-  }()
+  var addManually = UITextView()
+  var AM = UIButton()
   
   let scrollView: UIScrollView = {
     let v = UIScrollView()
@@ -31,81 +19,118 @@ class SettingsViewController: ViewController {
     return v
   }()
   
-  func getTextField(frame: CGRect, placecholder: String) -> UITextField {
-    let tf = UITextField(frame: frame)
-    tf.placeholder = placecholder
-    //tf.font = UIFont.systemFont(ofSize: 15)
-    //tf.borderStyle = UITextField.BorderStyle.roundedRect
-    tf.layer.borderColor = Defs.DarkRed.cgColor
-    tf.layer.cornerRadius = 15.0
-    tf.layer.borderWidth = 1.0
-    tf.tintColor = Defs.DarkRed
-    tf.keyboardType = UIKeyboardType.default
-    tf.returnKeyType = UIReturnKeyType.done
-    tf.clearButtonMode = UITextField.ViewMode.whileEditing
-    tf.contentVerticalAlignment = UIControl.ContentVerticalAlignment.center
-    let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: 0))
-    tf.leftView = paddingView
-    tf.leftViewMode = UITextField.ViewMode.always
-    
-    return tf
-  }
-  
-  lazy var mainSegment: UISegmentedControl = Defs.setUpSegmentedControl(frame: self.view.bounds.integral, elements: ["Cancel", "Submit"], yOffset: 120)
+  lazy var yOffset = UIApplication.shared.statusBarFrame.height + (navigationController?.navigationBar.frame.height)!
   
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    // add the scroll view to self.view
     self.view.addSubview(scrollView)
-    
-    // getBlockProblem().setSticky(type: HoldType.begin)
-    
-    // constrain the scroll view to 8-pts on each side
-    scrollView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
-    scrollView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
-    scrollView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
-    scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
-    
-    // add labelOne to the scroll view
-    scrollView.addSubview(labelOne)
-    
-    // constrain labelOne to left & top with 16-pts padding
-    // this also defines the left & top of the scroll content
-    labelOne.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 16.0).isActive = true
-    labelOne.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 16.0).isActive = true
-    
-    // add labelTwo to the scroll view
-    scrollView.addSubview(labelTwo)
-    
-    // constrain labelTwo at 400-pts from the left
-    labelTwo.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 200).isActive = true
-    
-    // constrain labelTwo at 1000-pts from the top
-    labelTwo.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 500).isActive = true
-    
-    // constrain labelTwo to right & bottom with 16-pts padding
-//    labelTwo.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: -16.0).isActive = true
-//    labelTwo.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -16.0).isActive = true
-    
-    
-    let userLocalProblemsTextField = getTextField(frame: CGRect(x: 20, y: 100, width: 300, height: 40), placecholder: "User Local Problems")
-    if (BPM.hasUserLocalProblems()) {
-      userLocalProblemsTextField.text = BPM.stringifyProblems(startIdx: BPM.getUserLocalStartIdx(), endIdx: BPM.getNumKnownProblems() - 1)
-    }
-    scrollView.addSubview(userLocalProblemsTextField)
-
-    let buildInProblems = getTextField(frame: CGRect(x: 20, y: 200, width: 300, height: 40), placecholder: "Build In Problems")
-    buildInProblems.text = BPM.stringifyProblems(startIdx: 0, endIdx: BPM.getUserLocalStartIdx() - 1)
-    scrollView.addSubview(buildInProblems)
     
     let shareButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(self.shareButtonPressed))
     let navigationController = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController
     navigationController!.viewControllers[1].navigationItem.rightBarButtonItem = shareButton
     
-    mainSegment.addTarget(self, action: #selector(SettingsViewController.mainSegmentedControlHandler(_:)), for: .valueChanged)
-    scrollView.addSubview(mainSegment)
+    let textFieldY = (self.view.frame.maxY - yOffset - CGFloat(7 * 10 + 3 * 10 + 4 * 35)) / 3 // 7 offsets, 3 extra offsets and 4 buttons
     
+    var yUsed = 10
+    let UDP = UILabel(frame: CGRect(x: 10, y: yUsed, width: 220, height: 35))
+    UDP.text = "User Defined Problems:"
+    scrollView.addSubview(UDP)
+    yUsed += 35
+    let userLocalProblemsTextField = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "User Local Problems")
+    if (BPM.hasUserLocalProblems()) {
+      userLocalProblemsTextField.text = BPM.stringifyProblems(startIdx: BPM.getUserLocalStartIdx(), endIdx: BPM.getNumKnownProblems() - 1)
+    }
+    scrollView.addSubview(userLocalProblemsTextField)
+    yUsed += Int(textFieldY)
+    yUsed += 10
+    yUsed += 10
+    
+    let BIP = UILabel(frame: CGRect(x: 10, y: yUsed, width: 220, height: 35))
+    BIP.text = "Build In Problems:"
+    scrollView.addSubview(BIP)
+    yUsed += 35
+    let buildInProblems = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "Build In Problems")
+    buildInProblems.text = BPM.stringifyProblems(startIdx: 0, endIdx: BPM.getUserLocalStartIdx() - 1)
+    scrollView.addSubview(buildInProblems)
+    yUsed += Int(textFieldY)
+    yUsed += 10
+    yUsed += 10
+    yUsed += 10
+    
+    addManually = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "Add manually")
+    addManually.delegate = self
+    scrollView.addSubview(addManually)
+    yUsed += Int(textFieldY)
+    yUsed += 10
+    AM.setUpLayer(button: AM, displayName: "Add manually", x: 10, y: yUsed, width: 220, height: 35)
+    AM.addTarget(self, action: #selector(addManuallyAction), for: .touchUpInside)
+    AM.isEnabled = false
+    scrollView.addSubview(AM)
+    yUsed += 35
+    yUsed += 10
+    yUsed += 10
+    
+    let PC = UIButton()
+    PC.setUpLayer(button: PC, displayName: "Purge duplicates", x: 10, y: yUsed, width: 220, height: 35)
+    PC.addTarget(self, action: #selector(purgeDuplicatesAction), for: .touchUpInside)
+    scrollView.addSubview(PC)
+    
+    scrollView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
+    scrollView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
+    scrollView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
+    scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+  }
+  
+  func getTextView(frame: CGRect, placecholder: String) -> UITextView {
+    let tv = UITextView(frame: frame)
+    // tf.placeholder = placecholder
+    tv.font = UIFont.systemFont(ofSize: 15)
+    //tf.borderStyle = UITextField.BorderStyle.roundedRect
+    tv.layer.borderColor = Defs.DarkRed.cgColor
+    tv.layer.cornerRadius = 15.0
+    tv.layer.borderWidth = 1.0
+    tv.tintColor = Defs.DarkRed
+    tv.keyboardType = UIKeyboardType.default
+    tv.returnKeyType = UIReturnKeyType.done
+    tv.textContainer.lineBreakMode = .byCharWrapping
+    
+    return tv
+  }
+  
+  func textViewDidChange(_ textView: UITextView){
+    AM.isEnabled = (textView.text?.count)! >= 1;
+  }
+  
+  @objc func addManuallyAction(_ sender: Any) {
+    let title = BPM.addManually(problems: addManually.text!)
+    let alertController = UIAlertController(title: title, message: "", preferredStyle: .alert)
+    alertController.view.tintColor = Defs.RedStroke
+    alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { (pAction) in
+      alertController.dismiss(animated: true, completion: nil)
+    }))
+    present(alertController, animated: true, completion: nil)
+  }
+  
+  @objc func purgeDuplicatesAction(_ sender: Any) {
+    let numPurged = BPM.purgeDuplicates()
+    var title = ""
+    if (0 == numPurged) {
+      title = "No duplicates found."
+    } else {
+      title = "Purged " + String(numPurged) + " duplicate"
+      if (numPurged > 1) {
+        title += "s."
+      } else {
+        title += "."
+      }
+    }
+    let alertController = UIAlertController(title: title, message: "", preferredStyle: .alert)
+    alertController.view.tintColor = Defs.RedStroke
+    alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { (pAction) in
+      alertController.dismiss(animated: true, completion: nil)
+    }))
+    present(alertController, animated: true, completion: nil)
   }
   
   @objc func shareButtonPressed(sender: UIView) {
@@ -113,28 +138,17 @@ class SettingsViewController: ViewController {
     scrollView.layer.render(in: UIGraphicsGetCurrentContext()!)
     UIGraphicsEndImageContext()
     
-    let problemToShare = [BPM.stringifyProblems(startIdx: 0, endIdx: BPM.getNumKnownProblems() - 1)] as [Any]
+    let userLocalIdx = BPM.getUserLocalStartIdx()
+    var toShare = "Build In Problems: ["
+    toShare.append(BPM.stringifyProblems(startIdx: 0, endIdx: userLocalIdx - 1))
+    toShare.append("]\nUser Local Problems: [")
+    toShare.append(BPM.stringifyProblems(startIdx: userLocalIdx, endIdx: BPM.getNumKnownProblems() - 1))
+    toShare.append("]")
+    let problemToShare = [toShare] as [Any]
     let activityVC = UIActivityViewController(activityItems: problemToShare, applicationActivities: nil)
     //Excluded Activities
     activityVC.excludedActivityTypes = [UIActivity.ActivityType.airDrop, UIActivity.ActivityType.addToReadingList]
     activityVC.popoverPresentationController?.sourceView = sender
     present(activityVC, animated: true, completion: nil)
-  }
-
-  //MARK: - Handle main segmented control.
-  @objc func mainSegmentedControlHandler(_ sender: UISegmentedControl) {
-    switch sender.selectedSegmentIndex {
-    case 0: // Cancel
-//      getBlockProblem().clean(oldIdx: getBlockProblem().getKnownProblemIdx(), shapes: &Shapes)
-//      setColorPickerVisibility(isHidden: true)
-//      cleanOverlays()
-      let overlayMode = false
-      break
-    case 1: // Submit
-      let overlay = true
-      break
-    default:
-      break
-    }
   }
 }

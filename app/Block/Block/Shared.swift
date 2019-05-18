@@ -66,3 +66,34 @@ struct Defs {
     return control
   }
 }
+
+extension UIButton
+{
+  func setUpLayer(button: UIButton?, displayName: String, x: Int, y: Int, width: Int, height: Int, isEnable: Bool = true) {
+    button!.setTitle(displayName, for: .normal)
+    button!.setTitleColor(Defs.DarkRed, for: .normal)
+    button!.layer.backgroundColor = Defs.White.withAlphaComponent(0.5).cgColor
+    button!.layer.borderColor = Defs.DarkRed.cgColor
+    button!.frame = CGRect(x: x, y: y, width:width, height:height)
+    button!.layer.borderWidth = 1.0
+    button!.layer.cornerRadius = 5.0
+    button!.isEnabled = isEnabled
+  }
+  
+  override open var isHighlighted: Bool {
+    get {
+      return super.isHighlighted
+    }
+    set {
+      if newValue {
+        backgroundColor = Defs.DarkRed
+        titleLabel?.textColor = Defs.White
+      }
+      else {
+        backgroundColor = Defs.White.withAlphaComponent(0.5)
+        titleLabel?.textColor = Defs.DarkRed
+      }
+      super.isHighlighted = newValue
+    }
+  }
+}
