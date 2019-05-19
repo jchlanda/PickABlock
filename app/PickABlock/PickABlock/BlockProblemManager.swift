@@ -29,13 +29,6 @@ extension OverlayColorPair: Equatable {
   }
 }
 
-struct KnownProblems : Codable {
-  init() {
-    self.knownProblems = []
-  }
-  var knownProblems: [Problem]
-}
-
 struct Problem : Codable {
   init() {
     self.name = ""
@@ -103,30 +96,18 @@ class BlockProblemManager {
   var currentProblem: Problem = Problem()
   
   init() {
-    knownProblems = loadKnownProblems(path: knownProblemsFile)
+    knownProblems = loadProblemsFromFile(path: knownProblemsFile)
     userLocalStartIdx = knownProblems.count
     let fileManager = FileManager.default
     if !fileManager.fileExists(atPath: userLocalFile.path) {
       FileManager.default.createFile(atPath: userLocalFile.path, contents: nil, attributes: nil)
     } else {
-      knownProblems.append(contentsOf: loadUserLocalProblems(path: userLocalFile.path))
+      knownProblems.append(contentsOf: loadProblemsFromFile(path: userLocalFile.path))
     }
     
   }
   
-  func loadKnownProblems(path: String) -> [Problem] {
-    do {
-      let data = try Data(contentsOf: URL(fileURLWithPath: path))
-      let decoder = JSONDecoder()
-      let jsonData = try decoder.decode(KnownProblems.self, from: data)
-      return jsonData.knownProblems
-    } catch {
-      print("error:\(error)")
-      return []
-    }
-  }
-  
-  func loadUserLocalProblems(path: String) -> [Problem] {
+  func loadProblemsFromFile(path: String) -> [Problem] {
     do {
       let contents = try NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue)
       if (contents == "") {
@@ -137,9 +118,6 @@ class BlockProblemManager {
       
       let jsonData = try decoder.decode([Problem].self, from: data)
       return jsonData
-      
-      //      let jsonData = try decoder.decode(KnownProblems.self, from: data)
-      //      return jsonData.knownProblems
     } catch {
       print("error:\(error)")
       return []
@@ -187,6 +165,9 @@ class BlockProblemManager {
   
   // Both inclusive.
   func stringifyProblems(startIdx: Int, endIdx: Int) -> String {
+    if (endIdx < startIdx) {
+      return ""
+    }
     let data = serializeProblems(startIdx: startIdx, endIdx: endIdx)
     return String(data: data, encoding: String.Encoding.utf8)!
   }
@@ -344,6 +325,9 @@ class BlockProblemManager {
   // Assumes there are no duplicates in built in problems.
   func purgeDuplicates() -> Int {
     var toDelete: [Int] = []
+    if (userLocalStartIdx == knownProblems.count) {
+      return 0
+    }
     // Check if udp duplicates bip.
     for (idx, p) in knownProblems[userLocalStartIdx...knownProblems.count - 1].enumerated() {
       for knownP in knownProblems[0...userLocalStartIdx - 1] {

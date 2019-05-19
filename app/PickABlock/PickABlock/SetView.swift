@@ -288,7 +288,7 @@ class SetView: ImageScrollView {
   }
   
   func showAddOverlay() {
-    let alertController = UIAlertController(title: "Add overlay?", message: "", preferredStyle: .alert)
+    let alertController = UIAlertController(title: "Add overlays?", message: "", preferredStyle: .alert)
     alertController.view.tintColor = Defs.RedStroke
     
     alertController.addAction(UIAlertAction(title: "No", style: .cancel, handler: { (pAction) in
