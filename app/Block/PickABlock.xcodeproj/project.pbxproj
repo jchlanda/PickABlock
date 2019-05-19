@@ -33,7 +33,7 @@
 		3B32D7DE224014420004911B /* BrowseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseViewController.swift; sourceTree = "<group>"; };
 		3B32D7E0224018800004911B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		3B32D7E222412DDD0004911B /* KnownProblems.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = KnownProblems.json; sourceTree = "<group>"; };
-		3B3D112A2236F5F500188EF0 /* Block.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Block.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B3D112A2236F5F500188EF0 /* PickABlock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PickABlock.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3D112D2236F5F500188EF0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3B3D112F2236F5F500188EF0 /* SetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetViewController.swift; sourceTree = "<group>"; };
 		3B3D11322236F5F500188EF0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -58,7 +58,7 @@
 		3B3D11212236F5F500188EF0 = {
 			isa = PBXGroup;
 			children = (
-				3B3D112C2236F5F500188EF0 /* Block */,
+				3B3D112C2236F5F500188EF0 /* PickABlock */,
 				3B3D112B2236F5F500188EF0 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -66,12 +66,12 @@
 		3B3D112B2236F5F500188EF0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3B3D112A2236F5F500188EF0 /* Block.app */,
+				3B3D112A2236F5F500188EF0 /* PickABlock.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		3B3D112C2236F5F500188EF0 /* Block */ = {
+		3B3D112C2236F5F500188EF0 /* PickABlock */ = {
 			isa = PBXGroup;
 			children = (
 				3B3D112D2236F5F500188EF0 /* AppDelegate.swift */,
@@ -91,15 +91,15 @@
 				3B3D11362236F5F600188EF0 /* LaunchScreen.storyboard */,
 				3B3D11392236F5F600188EF0 /* Info.plist */,
 			);
-			path = Block;
+			path = PickABlock;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		3B3D11292236F5F500188EF0 /* Block */ = {
+		3B3D11292236F5F500188EF0 /* PickABlock */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3B3D113C2236F5F600188EF0 /* Build configuration list for PBXNativeTarget "Block" */;
+			buildConfigurationList = 3B3D113C2236F5F600188EF0 /* Build configuration list for PBXNativeTarget "PickABlock" */;
 			buildPhases = (
 				3B3D11262236F5F500188EF0 /* Sources */,
 				3B3D11272236F5F500188EF0 /* Frameworks */,
@@ -109,9 +109,9 @@
 			);
 			dependencies = (
 			);
-			name = Block;
+			name = PickABlock;
 			productName = Block;
-			productReference = 3B3D112A2236F5F500188EF0 /* Block.app */;
+			productReference = 3B3D112A2236F5F500188EF0 /* PickABlock.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -130,7 +130,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3B3D11252236F5F500188EF0 /* Build configuration list for PBXProject "Block" */;
+			buildConfigurationList = 3B3D11252236F5F500188EF0 /* Build configuration list for PBXProject "PickABlock" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -143,7 +143,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3B3D11292236F5F500188EF0 /* Block */,
+				3B3D11292236F5F500188EF0 /* PickABlock */,
 			);
 		};
 /* End PBXProject section */
@@ -328,7 +328,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R6K8U2363K;
-				INFOPLIST_FILE = Block/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/PickABlock/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -348,7 +348,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R6K8U2363K;
-				INFOPLIST_FILE = Block/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/PickABlock/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -364,7 +364,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3B3D11252236F5F500188EF0 /* Build configuration list for PBXProject "Block" */ = {
+		3B3D11252236F5F500188EF0 /* Build configuration list for PBXProject "PickABlock" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3B3D113A2236F5F600188EF0 /* Debug */,
@@ -373,7 +373,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3B3D113C2236F5F600188EF0 /* Build configuration list for PBXNativeTarget "Block" */ = {
+		3B3D113C2236F5F600188EF0 /* Build configuration list for PBXNativeTarget "PickABlock" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3B3D113D2236F5F600188EF0 /* Debug */,
