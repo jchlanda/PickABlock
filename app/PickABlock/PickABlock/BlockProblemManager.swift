@@ -20,7 +20,7 @@ struct OverlayColorPair : Codable {
   }
   var color: Int
   var path: [[Int]]
-  
+
 }
 extension OverlayColorPair: Equatable {
   static func == (lhs: OverlayColorPair, rhs: OverlayColorPair) -> Bool {
@@ -46,7 +46,7 @@ struct Problem : Codable {
     self.normal = normal
     self.overlays = overlays
   }
-  
+
   var name: String
   var begin: [Int]
   var end: [Int]
@@ -84,17 +84,17 @@ class BlockProblemManager {
   static let shared = BlockProblemManager()
 
   var stickyToggle: Sticky = Sticky()
-  
+
   var knownProblems: [Problem] = []
   var knownOverlays: [[CAShapeLayer]] = []
   let knownProblemsFile = Bundle.main.path(forResource: "KnownProblems", ofType: "json")!
   var knownProblemsIdx: Int = 0
-  
+
   var userLocalStartIdx: Int = 0
   var userLocalFile = URL.documentsURL.appendingPathComponent("UserLocalProblems.json")
-  
+
   var currentProblem: Problem = Problem()
-  
+
   init() {
     knownProblems = loadProblemsFromFile(path: knownProblemsFile)
     userLocalStartIdx = knownProblems.count
@@ -104,9 +104,9 @@ class BlockProblemManager {
     } else {
       knownProblems.append(contentsOf: loadProblemsFromFile(path: userLocalFile.path))
     }
-    
+
   }
-  
+
   func loadProblemsFromFile(path: String) -> [Problem] {
     do {
       let contents = try NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue)
@@ -115,7 +115,7 @@ class BlockProblemManager {
       }
       let data = try Data(contentsOf: URL(fileURLWithPath: path))
       let decoder = JSONDecoder()
-      
+
       let jsonData = try decoder.decode([Problem].self, from: data)
       return jsonData
     } catch {
@@ -123,7 +123,7 @@ class BlockProblemManager {
       return []
     }
   }
-  
+
   func initKnownOverlays(view: UIImageView) {
     knownOverlays.removeAll()
     for p in self.knownProblems {
@@ -151,7 +151,7 @@ class BlockProblemManager {
       knownOverlays.append(currentOverlays)
     }
   }
-  
+
   // Both inclusive
   func saveUserLocalProblems(path: URL, startIdx: Int, endIdx: Int) {
     let data = serializeProblems(startIdx: startIdx, endIdx: endIdx)
@@ -162,7 +162,7 @@ class BlockProblemManager {
       print("error:\(error)")
     }
   }
-  
+
   // Both inclusive.
   func stringifyProblems(startIdx: Int, endIdx: Int) -> String {
     if (endIdx < startIdx) {
@@ -171,7 +171,7 @@ class BlockProblemManager {
     let data = serializeProblems(startIdx: startIdx, endIdx: endIdx)
     return String(data: data, encoding: String.Encoding.utf8)!
   }
-  
+
   // Both inclusive.
   func serializeProblems(startIdx: Int, endIdx: Int) -> Data {
     do {
@@ -183,11 +183,11 @@ class BlockProblemManager {
       return Data()
     }
   }
-  
+
   func setSticky(type: HoldType) {
     stickyToggle.value = type
   }
-  
+
   func displayNextKnownProblem(view: UIImageView, shapes: inout [CAShapeLayer]) {
     clean(oldIdx: knownProblemsIdx, shapes: &shapes)
     if (knownProblemsIdx == knownProblems.count - 1) {
@@ -197,7 +197,7 @@ class BlockProblemManager {
     }
     displayKnownProblem(view: view, problemIdx: knownProblemsIdx, shapes: &shapes)
   }
-  
+
   func displayPrevKnownProblem(view: UIImageView, shapes: inout [CAShapeLayer]) {
     clean(oldIdx: knownProblemsIdx, shapes: &shapes)
     if (knownProblemsIdx == 0) {
@@ -207,7 +207,7 @@ class BlockProblemManager {
     }
     displayKnownProblem(view: view, problemIdx: knownProblemsIdx, shapes: &shapes)
   }
-  
+
   func displayKnownProblem(view: UIImageView, problemIdx: Int, shapes: inout [CAShapeLayer]) {
     currentProblem = knownProblems[problemIdx]
     for b in currentProblem.begin {
@@ -226,23 +226,23 @@ class BlockProblemManager {
       o.isHidden = false
     }
   }
-  
+
   func getKnownProblemIdx() -> Int {
     return knownProblemsIdx
   }
-  
+
   func getUserLocalStartIdx() -> Int {
     return userLocalStartIdx
   }
-  
+
   func getNumKnownProblems() -> Int {
     return knownProblems.count
   }
-  
+
   func hasUserLocalProblems() -> Bool {
     return userLocalStartIdx < knownProblems.count
   }
-  
+
   func displayHold(type: HoldType, hold: inout CAShapeLayer) {
     hold.opacity = 0.5
     hold.fillColor = Defs.White.cgColor
@@ -260,7 +260,7 @@ class BlockProblemManager {
       hold.opacity = 0
     }
   }
-  
+
   func remove(index: Int, hold: inout CAShapeLayer) {
     hold.strokeColor = Defs.RedStroke.cgColor
     hold.fillColor = Defs.White.cgColor
@@ -282,7 +282,7 @@ class BlockProblemManager {
       return
     }
   }
-  
+
   func containsProblem(problem: Problem, array: ArraySlice<Problem>) -> Int {
     for (idx, p) in array.enumerated() {
       if (p == problem) {
@@ -291,8 +291,7 @@ class BlockProblemManager {
     }
     return -1
   }
-  
-  // TODO: JKB: Return a message (added x problems, filtered x duplicates, errror).
+
   func addManually(problems: String) -> String {
     do {
       let decoder = JSONDecoder()
@@ -321,7 +320,7 @@ class BlockProblemManager {
       return error.localizedDescription
     }
   }
-  
+
   // Assumes there are no duplicates in built in problems.
   func purgeDuplicates() -> Int {
     var toDelete: [Int] = []
@@ -349,7 +348,7 @@ class BlockProblemManager {
     if (toDelete.count == 0) {
       return 0
     }
-    
+
     toDelete.sort()
     for idx in toDelete.reversed() {
       knownProblems.remove(at: idx)
@@ -359,7 +358,7 @@ class BlockProblemManager {
 
     return toDelete.count
   }
-  
+
   func add(index: Int, hold: inout CAShapeLayer, type: HoldType, isSticky: Bool) {
     var currType = type
     if (isSticky) {
@@ -379,11 +378,11 @@ class BlockProblemManager {
     }
     displayHold(type: currType, hold: &hold)
   }
-  
+
   func getKnownProblemName() -> String {
     return knownProblems[knownProblemsIdx].name
   }
-  
+
   func consumeColoredOverlayPaths(problem: inout Problem, overlayShapePath: [ColoredOverlayPath]) {
     for o in overlayShapePath {
       var path: [[Int]] = []
@@ -393,14 +392,14 @@ class BlockProblemManager {
       problem.overlays.append(OverlayColorPair(color: o.colorArrayIdx, path: path))
     }
   }
-  
+
   func serialize(name: String, overlays: [ColoredOverlayPath]) {
     currentProblem.name = name
     consumeColoredOverlayPaths(problem: &currentProblem, overlayShapePath: overlays)
     knownProblems.append(currentProblem)
     saveUserLocalProblems(path: userLocalFile, startIdx: userLocalStartIdx, endIdx: knownProblems.count - 1)
   }
-  
+
   func clean(oldIdx: Int, shapes: inout [CAShapeLayer]) {
     for b in currentProblem.begin {
       shapes[b].opacity = 0
@@ -427,11 +426,11 @@ class BlockProblemManager {
       o.isHidden = true
     }
   }
-  
+
   func canDeleteProblem() -> Bool {
     return knownProblemsIdx >= userLocalStartIdx
   }
-  
+
   func deleteProblem() {
     if let idx = knownProblems.firstIndex(where: { $0 == currentProblem }) {
       knownProblems.remove(at: idx)

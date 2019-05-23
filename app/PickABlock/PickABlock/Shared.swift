@@ -32,13 +32,13 @@ struct Defs {
   // Normal.
   static let RedStroke = UIColor(hue: 0, saturation: 1, brightness: 0.85, alpha: 1.0)
   static let RedFill = UIColor(hue: 0, saturation: 1, brightness: 0.55, alpha: 1.0)
-  
+
   static let DarkRed = UIColor(hue: 0, saturation: 1, brightness: 0.63, alpha: 1.0)
-  
+
   static let White = UIColor(hue: 0, saturation: 0, brightness: 1, alpha: 1.0)
-  
+
   static let NoFill = UIColor(hue: 0, saturation: 0, brightness: 0.0, alpha: 0.0)
-  
+
   // RRGGBB hex colors in the same order as the image
   static let colorArray = [ 0x000000, 0xfe0000, 0xff7900, 0xffb900, 0xffde00, 0xfcff00, 0x8c0000, 0x05c000, 0x00c0a7, 0x0600ff, 0x6700bf, 0x9500c0, 0xbf0199, 0xffffff ]
   static func uiColorFromHex(rgbValue: Int) -> UIColor {
@@ -46,10 +46,10 @@ struct Defs {
     let green = CGFloat((rgbValue & 0x00FF00) >> 8) / 0xFF
     let blue = CGFloat(rgbValue & 0x0000FF) / 0xFF
     let alpha = CGFloat(1.0)
-    
+
     return UIColor(red: red, green: green, blue: blue, alpha: alpha)
   }
-  
+
   static func setUpSegmentedControl(frame: CGRect, elements: [String], yOffset: CGFloat, isHidden: Bool = false) -> UISegmentedControl {
     let control = UISegmentedControl(items: elements)
     control.layer.borderColor = Defs.DarkRed.cgColor
@@ -62,7 +62,7 @@ struct Defs {
     control.layer.borderWidth = 1.0
     control.layer.masksToBounds = true
     control.isMomentary = true
-    
+
     return control
   }
 }
@@ -79,7 +79,7 @@ extension UIButton
     button!.layer.cornerRadius = 5.0
     button!.isEnabled = isEnabled
   }
-  
+
   override open var isHighlighted: Bool {
     get {
       return super.isHighlighted

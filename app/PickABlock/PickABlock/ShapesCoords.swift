@@ -23,7 +23,7 @@ struct AutoGen {
       //    Path.close()
       //    Paths.append(Path)
       //  }
-      
+
       //  for (Sh, P) in zip(Shapes, Paths) {
       //    imageView.layer.addSublayer(Sh)
       //    Sh.opacity = 0.5

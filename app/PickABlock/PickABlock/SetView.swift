@@ -9,22 +9,22 @@
 import UIKit
 
 class SetView: ImageScrollView {
-  
+
   let generator = UIImpactFeedbackGenerator(style: .light)
   var longTouchPoint: CGPoint = CGPoint()
-  
+
   var stickyToggle = false
   var stickyChanged = false
-  
+
   var overlayMode = false
   var overlayPath = UIBezierPath()
   var overlayPaths: [ColoredOverlayPath] = []
-  
+
   lazy var mainSegment: UISegmentedControl = Defs.setUpSegmentedControl(frame: self.frame, elements: ["Cancel", "Submit"], yOffset: yOffset)
   lazy var colorSegment: UISegmentedControl = Defs.setUpSegmentedControl(frame: self.frame, elements: [""], yOffset: yOffset + 50)
-  
+
   var slider = UISlider()
-  
+
   enum undoRedoState {
     case normal
     case undo
@@ -33,7 +33,7 @@ class SetView: ImageScrollView {
   var undoButton = UIButton()
   var undoStack: [ColoredOverlayPath] = []
   var undoRedo: undoRedoState = undoRedoState.normal
-  
+
   override func display(_ image: UIImage) {
     super.display(image)
     mainSegment.addTarget(self, action: #selector(SetView.mainSegmentedControlHandler(_:)), for: .valueChanged)
@@ -41,10 +41,10 @@ class SetView: ImageScrollView {
     superview?.addSubview(colorSegment)
     slider = setUpSlider()
     superview?.addSubview(slider)
-    
+
     let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressHandler))
     superview?.addGestureRecognizer(recognizer)
-    
+
     redoButton.setUpLayer(button: redoButton, displayName: ">", x: Int(frame.maxX - 10 - 35), y: Int(frame.maxY - yOffset - 50), width: 35, height: 40)
     redoButton.layer.cornerRadius = 15.0
     redoButton.layer.borderWidth = 1.0
@@ -69,7 +69,7 @@ class SetView: ImageScrollView {
     redone!.overlayShapePath.strokeColor = strokeColorAlpha1.cgColor
     overlayPaths.append(redone!)
   }
-  
+
   @objc func undoButtonAction(sender: UIButton!) {
     if (undoRedo == undoRedoState.normal) {
       undoStack.removeAll()
@@ -83,7 +83,7 @@ class SetView: ImageScrollView {
     undone!.overlayShapePath.strokeColor = strokeColorAlpha0.cgColor
     undoStack.append(undone!)
   }
-  
+
   func cleanOverlays() {
     for u in undoStack {
       let strokeColorAlpha0 = UIColor(cgColor: u.overlayShapePath.strokeColor!).withAlphaComponent(0)
@@ -96,28 +96,28 @@ class SetView: ImageScrollView {
     undoStack.removeAll()
     overlayPaths.removeAll()
   }
-  
+
   func setUpSlider() -> UISlider {
     let slider = UISlider()
     slider.frame = CGRect(x: frame.minX + 10 + 35, y: frame.maxY - yOffset - 50,
                           width: frame.maxX - 2 * 10 - 2 * 35, height: 40)
-    
+
     slider.minimumTrackTintColor = Defs.White.withAlphaComponent(0)
     slider.maximumTrackTintColor = Defs.White.withAlphaComponent(0)
     slider.maximumValue = 13
     slider.minimumValue = 0
     slider.setValue(6.5, animated: false)
     slider.thumbTintColor = Defs.uiColorFromHex(rgbValue: Defs.colorArray[Int(slider.value)])
-    
+
     slider.addTarget(self,action: #selector(self.sliderChanged),  for: .valueChanged)
-    
+
     return slider
   }
-  
+
   @objc func sliderChanged(sender: AnyObject) {
     slider.thumbTintColor = Defs.uiColorFromHex(rgbValue: Defs.colorArray[Int(slider.value)])
   }
-  
+
   func createSwitch () -> UISwitch{
     let switchControl = UISwitch(frame:CGRect(x: 10, y: 20, width: 0, height: 0));
     switchControl.isOn = stickyToggle
@@ -125,16 +125,16 @@ class SetView: ImageScrollView {
     switchControl.addTarget(self, action: #selector(self.switchValueDidChange), for: .valueChanged);
     return switchControl
   }
-  
+
   @objc func switchValueDidChange(sender:UISwitch!){
     stickyChanged = sender.isOn
     stickyToggle = sender.isOn
   }
-  
+
   func showSetSpecial(index: Int) {
     var shape = Shapes[index]
     let alertController = UIAlertController(title: "Set special:", message: "", preferredStyle: .alert)
-    
+
     let customView = UIView()
     alertController.view.addSubview(customView)
     customView.translatesAutoresizingMaskIntoConstraints = false
@@ -151,11 +151,11 @@ class SetView: ImageScrollView {
     stickyLabel.textColor = Defs.RedStroke
     customView.addSubview(stickyLabel)
     customView.addSubview(createSwitch())
-    
+
     alertController.view.translatesAutoresizingMaskIntoConstraints = false
     alertController.view.heightAnchor.constraint(equalToConstant: 325).isActive = true
     alertController.view.tintColor = Defs.RedStroke
-    
+
     let begin = UIAlertAction(title: "Begin", style: UIAlertAction.Style.default) {
       UIAlertAction in
       if (self.stickyChanged) {
@@ -196,11 +196,11 @@ class SetView: ImageScrollView {
     alertController.addAction(feet)
     alertController.addAction(normal)
     alertController.addAction(cancel)
-    
+
     let vc = findViewController()
     vc?.present(alertController, animated: true, completion: nil)
   }
-  
+
   @objc func longPressHandler(sender: UILongPressGestureRecognizer) {
     if (sender.state != UIGestureRecognizer.State.began) {
       return
@@ -214,7 +214,7 @@ class SetView: ImageScrollView {
       }
     }
   }
-  
+
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     let touch = touches.first
     let point = touch!.location(in: self.zoomView)
@@ -235,7 +235,7 @@ class SetView: ImageScrollView {
       overlayPath.move(to: point)
     }
   }
-  
+
   override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
     if (overlayMode) {
       let touch = touches.first
@@ -243,14 +243,14 @@ class SetView: ImageScrollView {
       overlayPath.addLine(to: point)
     }
   }
-  
+
   override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
     if (overlayMode) {
       undoRedo = undoRedoState.normal
       let touch = touches.first
       let point = touch!.location(in: self.zoomView)
       overlayPath.addLine(to: point)
-      
+
       var simplifiedOverlayPath = overlayPath.cgPath.ramerDouglasPeuckerPoints
       if (simplifiedOverlayPath.count < 2) {
         return
@@ -271,7 +271,7 @@ class SetView: ImageScrollView {
       overlayPaths.append(ColoredOverlayPath(index: Int(slider.value), shapePath: Shape))
     }
   }
-  
+
   @objc func alertTextFieldDidChange(field: UITextField){
     let vc = findViewController()
     let alertController:UIAlertController = vc?.presentedViewController as! UIAlertController;
@@ -279,18 +279,18 @@ class SetView: ImageScrollView {
     let addAction: UIAlertAction = alertController.actions[1];
     addAction.isEnabled = (textField.text?.count)! >= 1;
   }
-  
+
   func setColorPickerVisibility(isHidden: Bool) {
     self.colorSegment.isHidden = isHidden
     self.slider.isHidden = isHidden
     self.redoButton.isHidden = isHidden
     self.undoButton.isHidden = isHidden
   }
-  
+
   func showAddOverlay() {
     let alertController = UIAlertController(title: "Add overlays?", message: "", preferredStyle: .alert)
     alertController.view.tintColor = Defs.RedStroke
-    
+
     alertController.addAction(UIAlertAction(title: "No", style: .cancel, handler: { (pAction) in
       alertController.dismiss(animated: true, completion: nil)
       self.showSubmit()
@@ -302,19 +302,17 @@ class SetView: ImageScrollView {
       self.overlayMode = true
       self.setColorPickerVisibility(isHidden: false)
     }))
-    // show alert controller
     let vc = findViewController()
     vc?.present(alertController, animated: true, completion: nil)
-    
+
   }
-  
+
   func showSubmit() {
     overlayMode = false
     var textField: UITextField?
-    // create alertController
     let alertController = UIAlertController(title: "Submit a problem", message: "", preferredStyle: .alert)
     alertController.view.tintColor = Defs.RedStroke
-    
+
     alertController.addTextField { (pTextField) in
       pTextField.placeholder = "name or descriptioin"
       pTextField.clearButtonMode = .whileEditing
@@ -334,12 +332,10 @@ class SetView: ImageScrollView {
     })
     okAction.isEnabled = false
     alertController.addAction(okAction)
-    // show alert controller
     let vc = findViewController()
     vc?.present(alertController, animated: true, completion: nil)
   }
-  
-  //MARK: - Handle main segmented control.
+
   @objc func mainSegmentedControlHandler(_ sender: UISegmentedControl) {
     switch sender.selectedSegmentIndex {
     case 0: // Cancel
@@ -383,24 +379,24 @@ extension CGPath {
     }
     return arrPoints
   }
-  
+
   var ramerDouglasPeuckerPoints: [CGPoint] {
     let inPoints = self.points
     var outPoints: [CGPoint] = []
     ramerDouglasPeucker(path: inPoints, startIdx: 0, endIdx: (inPoints.count - 1), epsilon: 0.05, simplified: &outPoints)
     return outPoints
   }
-  
+
   func perpendicularDistance(point: CGPoint, a: CGFloat, c: CGFloat) -> CGFloat {
     // d = (|a*x0 + b*y0 + c|)/(sqrt(a^2 + b^2))
     let b: CGFloat = 1.0
     let dividend = abs(a * point.x + b * point.y + c)
     let divisor = sqrt(a * a + c * c)
     let d = dividend/divisor
-    
+
     return d
   }
-  
+
   func ramerDouglasPeucker(path: [CGPoint], startIdx: Int, endIdx: Int, epsilon: CGFloat, simplified: inout [CGPoint]) {
     if (endIdx - startIdx < 1) {
       return

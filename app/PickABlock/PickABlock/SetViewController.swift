@@ -9,11 +9,11 @@
 import UIKit
 
 class SetViewController: ViewController {
-  
+
   override func viewDidLoad() {
     self.imageScrollView = SetView(frame: self.view.bounds)
     self.image = UIImage(named: "AlienBlockAR2")!
-    
+
     super.viewDidLoad()
   }
 
@@ -21,4 +21,3 @@ class SetViewController: ViewController {
     self.imageScrollView.setEditState(knownProblemsIdx: knownProblemsIdx)
   }
 }
-

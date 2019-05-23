@@ -9,29 +9,29 @@
 import UIKit
 
 class SettingsViewController: ViewController, UITextViewDelegate {
-  
-  var addManually = UITextView()
+
+  var AMTV = UITextView()
   var AM = UIButton()
-  
+
   let scrollView: UIScrollView = {
     let v = UIScrollView()
     v.translatesAutoresizingMaskIntoConstraints = false
     return v
   }()
-  
+
   lazy var yOffset = UIApplication.shared.statusBarFrame.height + (navigationController?.navigationBar.frame.height)!
-  
+
   override func viewDidLoad() {
     super.viewDidLoad()
-    
+
     self.view.addSubview(scrollView)
-    
+
     let shareButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(self.shareButtonPressed))
     let navigationController = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController
     navigationController!.viewControllers[1].navigationItem.rightBarButtonItem = shareButton
-    
+
     let textFieldY = (self.view.frame.maxY - yOffset - CGFloat(7 * 10 + 3 * 10 + 4 * 35)) / 3 // 7 offsets, 3 extra offsets and 4 buttons
-    
+
     var yUsed = 10
     let UDP = UILabel(frame: CGRect(x: 10, y: yUsed, width: 220, height: 35))
     UDP.text = "User Defined Problems:"
@@ -45,7 +45,7 @@ class SettingsViewController: ViewController, UITextViewDelegate {
     yUsed += Int(textFieldY)
     yUsed += 10
     yUsed += 10
-    
+
     let BIP = UILabel(frame: CGRect(x: 10, y: yUsed, width: 220, height: 35))
     BIP.text = "Build In Problems:"
     scrollView.addSubview(BIP)
@@ -57,10 +57,10 @@ class SettingsViewController: ViewController, UITextViewDelegate {
     yUsed += 10
     yUsed += 10
     yUsed += 10
-    
-    addManually = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "Add manually")
-    addManually.delegate = self
-    scrollView.addSubview(addManually)
+
+    AMTV = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "Add manually")
+    AMTV.delegate = self
+    scrollView.addSubview(AMTV)
     yUsed += Int(textFieldY)
     yUsed += 10
     AM.setUpLayer(button: AM, displayName: "Add manually", x: 10, y: yUsed, width: 220, height: 35)
@@ -70,23 +70,21 @@ class SettingsViewController: ViewController, UITextViewDelegate {
     yUsed += 35
     yUsed += 10
     yUsed += 10
-    
-    let PC = UIButton()
-    PC.setUpLayer(button: PC, displayName: "Purge duplicates", x: 10, y: yUsed, width: 220, height: 35)
-    PC.addTarget(self, action: #selector(purgeDuplicatesAction), for: .touchUpInside)
-    scrollView.addSubview(PC)
-    
+
+    let PD = UIButton()
+    PD.setUpLayer(button: PD, displayName: "Purge duplicates", x: 10, y: yUsed, width: 220, height: 35)
+    PD.addTarget(self, action: #selector(purgeDuplicatesAction), for: .touchUpInside)
+    scrollView.addSubview(PD)
+
     scrollView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
     scrollView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
     scrollView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
     scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
   }
-  
+
   func getTextView(frame: CGRect, placecholder: String) -> UITextView {
     let tv = UITextView(frame: frame)
-    // tf.placeholder = placecholder
     tv.font = UIFont.systemFont(ofSize: 15)
-    //tf.borderStyle = UITextField.BorderStyle.roundedRect
     tv.layer.borderColor = Defs.DarkRed.cgColor
     tv.layer.cornerRadius = 15.0
     tv.layer.borderWidth = 1.0
@@ -94,16 +92,16 @@ class SettingsViewController: ViewController, UITextViewDelegate {
     tv.keyboardType = UIKeyboardType.default
     tv.returnKeyType = UIReturnKeyType.done
     tv.textContainer.lineBreakMode = .byCharWrapping
-    
+
     return tv
   }
-  
+
   func textViewDidChange(_ textView: UITextView){
     AM.isEnabled = (textView.text?.count)! >= 1;
   }
-  
+
   @objc func addManuallyAction(_ sender: Any) {
-    let title = BPM.addManually(problems: addManually.text!)
+    let title = BPM.addManually(problems: AMTV.text!)
     let alertController = UIAlertController(title: title, message: "", preferredStyle: .alert)
     alertController.view.tintColor = Defs.RedStroke
     alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { (pAction) in
@@ -111,7 +109,7 @@ class SettingsViewController: ViewController, UITextViewDelegate {
     }))
     present(alertController, animated: true, completion: nil)
   }
-  
+
   @objc func purgeDuplicatesAction(_ sender: Any) {
     let numPurged = BPM.purgeDuplicates()
     var title = ""
@@ -132,12 +130,12 @@ class SettingsViewController: ViewController, UITextViewDelegate {
     }))
     present(alertController, animated: true, completion: nil)
   }
-  
+
   @objc func shareButtonPressed(sender: UIView) {
     UIGraphicsBeginImageContext(scrollView.frame.size)
     scrollView.layer.render(in: UIGraphicsGetCurrentContext()!)
     UIGraphicsEndImageContext()
-    
+
     let userLocalIdx = BPM.getUserLocalStartIdx()
     var toShare = "Build In Problems: ["
     toShare.append(BPM.stringifyProblems(startIdx: 0, endIdx: userLocalIdx - 1))
