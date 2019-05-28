@@ -160,7 +160,7 @@ class SetView: ImageScrollView {
 
     let begin = UIAlertAction(title: "Begin", style: UIAlertAction.Style.default) {
       UIAlertAction in
-      if (self.stickyChanged) {
+      if (self.stickyChanged || self.stickyToggle) {
         self.getBlockProblemManager().setSticky(type: HoldType.begin)
         self.stickyChanged = false
       }
@@ -168,7 +168,7 @@ class SetView: ImageScrollView {
     }
     let end = UIAlertAction(title: "End", style: UIAlertAction.Style.default) {
       UIAlertAction in
-      if (self.stickyChanged) {
+      if (self.stickyChanged || self.stickyToggle) {
         self.getBlockProblemManager().setSticky(type: HoldType.end)
         self.stickyChanged = false
       }
@@ -176,7 +176,7 @@ class SetView: ImageScrollView {
     }
     let feet = UIAlertAction(title: "Feet only", style: UIAlertAction.Style.default) {
       UIAlertAction in
-      if (self.stickyChanged) {
+      if (self.stickyChanged || self.stickyToggle) {
         self.getBlockProblemManager().setSticky(type: HoldType.feetOnly)
         self.stickyChanged = false
       }
@@ -184,7 +184,7 @@ class SetView: ImageScrollView {
     }
     let normal = UIAlertAction(title: "Normal", style: UIAlertAction.Style.default) {
       UIAlertAction in
-      if (self.stickyChanged) {
+      if (self.stickyChanged || self.stickyToggle) {
         self.getBlockProblemManager().setSticky(type: HoldType.normal)
         self.stickyChanged = false
       }

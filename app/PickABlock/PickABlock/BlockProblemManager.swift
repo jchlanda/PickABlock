@@ -369,12 +369,24 @@ class BlockProblemManager {
     }
     switch currType {
     case HoldType.normal:
+      if currentProblem.normal.firstIndex(of: index) != nil {
+        return
+      }
       currentProblem.normal.append(index)
     case HoldType.begin:
+      if currentProblem.begin.firstIndex(of: index) != nil {
+        return
+      }
       currentProblem.begin.append(index)
     case HoldType.end:
+      if currentProblem.end.firstIndex(of: index) != nil {
+        return
+      }
       currentProblem.end.append(index)
     case HoldType.feetOnly:
+      if currentProblem.feetOnly.firstIndex(of: index) != nil {
+        return
+      }
       currentProblem.feetOnly.append(index)
     default:
       return
