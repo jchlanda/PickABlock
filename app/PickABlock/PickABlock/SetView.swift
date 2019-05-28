@@ -58,6 +58,8 @@ class SetView: ImageScrollView {
     superview?.addSubview(redoButton)
     superview?.addSubview(undoButton)
     setColorPickerVisibility(isHidden: true)
+
+    getBlockProblemManager().clean(oldIdx: getBlockProblemManager().getKnownProblemIdx(), shapes: &Shapes)
   }
 
   @objc func redoButtonAction(sender: UIButton!) {

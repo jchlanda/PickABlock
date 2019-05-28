@@ -175,6 +175,9 @@ class BlockProblemManager {
   // Both inclusive.
   func serializeProblems(startIdx: Int, endIdx: Int) -> Data {
     do {
+      if (endIdx < startIdx) {
+        return Data()
+      }
       // Can't form a range if start == end.
       return try JSONEncoder().encode(startIdx == endIdx ? [knownProblems[startIdx]] : Array(knownProblems[startIdx...endIdx]))
     }

@@ -17,7 +17,7 @@ class BrowseView: ImageScrollView {
 
   override func display(_ image: UIImage) {
     super.display(image)
-    getBlockProblemManager().displayKnownProblem(view: self.zoomView, problemIdx: 0, shapes: &Shapes)
+    getBlockProblemManager().displayKnownProblem(view: self.zoomView, problemIdx: getBlockProblemManager().getKnownProblemIdx(), shapes: &Shapes)
     mainSegment.addTarget(self, action: #selector(BrowseView.mainSegmentedControlHandler(_:)), for: .valueChanged)
     superview?.addSubview(mainSegment)
 
