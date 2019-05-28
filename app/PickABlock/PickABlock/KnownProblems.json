@@ -30,5 +30,21 @@
     "feetOnly": [ 245, 413, 315 ],
     "normal": [ 198, 46, 290, 279, 458, 98 ],
     "overlays": [ { "color": 0, "path": [] } ]
+  },
+  {
+    "name":"Boulder tripping",
+    "begin": [ 225 ],
+    "end": [ 124 ],
+    "feetOnly": [ 245, 409, 313, 274, 369, 238 ],
+    "normal": [ 290, 94, 22, 33, 56, 441, 296 ],
+    "overlays": [ { "color": 0, "path": [] } ]
+  },
+  {
+    "name":"T.W.",
+    "begin":[ 340, 425 ],
+    "end":[ 131 ],
+    "normal":[ 29, 331, 280, 267, 458, 95, 111 ],
+    "feetOnly":[ 389, 411 ],
+    "overlays":[ { "color": 0, "path": [] } ]
   }
 ]
