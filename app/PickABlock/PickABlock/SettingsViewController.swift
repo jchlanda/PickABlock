@@ -9,7 +9,7 @@
 import UIKit
 
 class SettingsViewController: ViewController, UITextViewDelegate {
-
+  var userLocalProblemsTextField = UITextView()
   var AMTV = UITextView()
   var AM = UIButton()
 
@@ -37,7 +37,7 @@ class SettingsViewController: ViewController, UITextViewDelegate {
     UDP.text = "User Defined Problems:"
     scrollView.addSubview(UDP)
     yUsed += 35
-    let userLocalProblemsTextField = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "User Local Problems")
+    userLocalProblemsTextField = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "User Local Problems")
     if (BPM.hasUserLocalProblems()) {
       userLocalProblemsTextField.text = BPM.stringifyProblems(startIdx: BPM.getUserLocalStartIdx(), endIdx: BPM.getNumKnownProblems() - 1)
     }
@@ -122,6 +122,7 @@ class SettingsViewController: ViewController, UITextViewDelegate {
       } else {
         title += "."
       }
+      userLocalProblemsTextField.text = BPM.stringifyProblems(startIdx: BPM.getUserLocalStartIdx(), endIdx: BPM.getNumKnownProblems() - 1)
     }
     let alertController = UIAlertController(title: title, message: "", preferredStyle: .alert)
     alertController.view.tintColor = Defs.RedStroke
