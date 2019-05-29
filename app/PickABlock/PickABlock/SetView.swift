@@ -310,6 +310,7 @@ class SetView: ImageScrollView {
   }
 
   func showSubmit() {
+    let vc = findViewController()
     overlayMode = false
     var textField: UITextField?
     let alertController = UIAlertController(title: "Submit a problem", message: "", preferredStyle: .alert)
@@ -331,10 +332,16 @@ class SetView: ImageScrollView {
       let problemName = textField?.text ?? ""
       self.getBlockProblemManager().serialize(name: problemName, overlays: self.overlayPaths)
       alertController.dismiss(animated: true, completion: nil)
+
+      let successAlertController = UIAlertController(title: problemName + " added successfully.", message: "", preferredStyle: .alert)
+      successAlertController.view.tintColor = Defs.RedStroke
+      successAlertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { (pAction) in
+        successAlertController.dismiss(animated: true, completion: nil)
+      }))
+      vc?.present(successAlertController, animated: true, completion: nil)
     })
     okAction.isEnabled = false
     alertController.addAction(okAction)
-    let vc = findViewController()
     vc?.present(alertController, animated: true, completion: nil)
   }
 
