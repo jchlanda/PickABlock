@@ -59,6 +59,8 @@ class SetView: ImageScrollView {
     setColorPickerVisibility(isHidden: true)
 
     getBlockProblemManager().clean(oldIdx: getBlockProblemManager().getKnownProblemIdx(), shapes: &Shapes)
+
+    setTwoFingerPan(on: false)
   }
 
   @objc func redoButtonAction(sender: UIButton!) {
@@ -220,21 +222,22 @@ class SetView: ImageScrollView {
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     let touch = touches.first
     let point = touch!.location(in: self.zoomView)
-    longTouchPoint = point
-    for i in 0..<Shapes.count {
-      var sh = Shapes[i]
-      if sh.path!.contains(point) {
-        generator.impactOccurred()
-        if (sh.opacity == 0) {
-          getBlockProblemManager().add(index: i, hold: &sh, type: HoldType.normal, isSticky: stickyToggle)
-        } else {
-          getBlockProblemManager().remove(index: i, hold: &sh)
-        }
-      }
-    }
     if (overlayMode) {
       overlayPath.removeAllPoints()
       overlayPath.move(to: point)
+    } else {
+      // Disallow hold selection in overlay mode.
+      for i in 0..<Shapes.count {
+        var sh = Shapes[i]
+        if sh.path!.contains(point) {
+          generator.impactOccurred()
+          if (sh.opacity == 0) {
+            getBlockProblemManager().add(index: i, hold: &sh, type: HoldType.normal, isSticky: stickyToggle)
+          } else {
+            getBlockProblemManager().remove(index: i, hold: &sh)
+          }
+        }
+      }
     }
   }
 
@@ -289,6 +292,15 @@ class SetView: ImageScrollView {
     self.undoButton.isHidden = isHidden
   }
 
+  func setTwoFingerPan(on: Bool) {
+    for gestureRecognizer: UIGestureRecognizer in self.gestureRecognizers! {
+      if (gestureRecognizer is UIPanGestureRecognizer) {
+        let panGR = gestureRecognizer as? UIPanGestureRecognizer
+        panGR?.minimumNumberOfTouches = on ? 2 : 1
+      }
+    }
+  }
+
   func showAddOverlay() {
     let alertController = UIAlertController(title: "Add overlays?", message: "", preferredStyle: .alert)
     alertController.view.tintColor = Defs.RedStroke
@@ -303,6 +315,8 @@ class SetView: ImageScrollView {
       alertController.dismiss(animated: true, completion: nil)
       self.overlayMode = true
       self.setColorPickerVisibility(isHidden: false)
+      self.setTwoFingerPan(on: true)
+      self.mainSegment.setTitle("Select holds", forSegmentAt: 0)
     }))
     let vc = findViewController()
     vc?.present(alertController, animated: true, completion: nil)
@@ -325,6 +339,7 @@ class SetView: ImageScrollView {
     }
     alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (pAction) in
       self.setColorPickerVisibility(isHidden: true)
+      self.setTwoFingerPan(on: false)
       alertController.dismiss(animated: true, completion: nil)
     }))
     let okAction = UIAlertAction(title: "OK", style: .default, handler: { (pAction) in
@@ -332,7 +347,7 @@ class SetView: ImageScrollView {
       let problemName = textField?.text ?? ""
       self.getBlockProblemManager().serialize(name: problemName, overlays: self.overlayPaths)
       alertController.dismiss(animated: true, completion: nil)
-
+      self.setTwoFingerPan(on: false)
       let successAlertController = UIAlertController(title: problemName + " added successfully.", message: "", preferredStyle: .alert)
       successAlertController.view.tintColor = Defs.RedStroke
       successAlertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { (pAction) in
@@ -348,10 +363,16 @@ class SetView: ImageScrollView {
   @objc func mainSegmentedControlHandler(_ sender: UISegmentedControl) {
     switch sender.selectedSegmentIndex {
     case 0: // Cancel
-      getBlockProblemManager().clean(oldIdx: getBlockProblemManager().getKnownProblemIdx(), shapes: &Shapes)
-      setColorPickerVisibility(isHidden: true)
-      cleanOverlays()
-      overlayMode = false
+      if (overlayMode) {
+        mainSegment.setTitle("Cancel", forSegmentAt: 0)
+        setColorPickerVisibility(isHidden: true)
+        overlayMode = false
+        setTwoFingerPan(on: false)
+      } else {
+        getBlockProblemManager().clean(oldIdx: getBlockProblemManager().getKnownProblemIdx(), shapes: &Shapes)
+        setColorPickerVisibility(isHidden: true)
+        cleanOverlays()
+      }
       break
     case 1: // Submit
       if (!overlayMode) {
