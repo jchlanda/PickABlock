@@ -138,9 +138,9 @@ class SettingsViewController: ViewController, UITextViewDelegate {
     UIGraphicsEndImageContext()
 
     let userLocalIdx = BPM.getUserLocalStartIdx()
-    var toShare = "Build In Problems: ["
+    var toShare = "Build In Problems:\n["
     toShare.append(BPM.stringifyProblems(startIdx: 0, endIdx: userLocalIdx - 1))
-    toShare.append("]\nUser Local Problems: [")
+    toShare.append("]\n\nUser Local Problems:\n[")
     toShare.append(BPM.stringifyProblems(startIdx: userLocalIdx, endIdx: BPM.getNumKnownProblems() - 1))
     toShare.append("]")
     let problemToShare = [toShare] as [Any]
