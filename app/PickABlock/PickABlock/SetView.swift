@@ -11,7 +11,6 @@ import UIKit
 class SetView: ImageScrollView {
 
   let generator = UIImpactFeedbackGenerator(style: .light)
-  var longTouchPoint: CGPoint = CGPoint()
 
   var stickyToggle = false
   var stickyChanged = false
@@ -207,6 +206,7 @@ class SetView: ImageScrollView {
     if (sender.state != UIGestureRecognizer.State.began) {
       return
     }
+    let longTouchPoint = sender.location(in: self.zoomView)
     for i in 0..<Shapes.count {
       if Shapes[i].path!.contains(longTouchPoint) {
         generator.impactOccurred()
