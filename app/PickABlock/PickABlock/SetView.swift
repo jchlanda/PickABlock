@@ -331,7 +331,7 @@ class SetView: ImageScrollView {
     alertController.view.tintColor = Defs.RedStroke
 
     alertController.addTextField { (pTextField) in
-      pTextField.placeholder = "name or descriptioin"
+      pTextField.placeholder = "Name or descriptioin."
       pTextField.clearButtonMode = .whileEditing
       pTextField.borderStyle = .none
       pTextField.addTarget(self, action: #selector(self.alertTextFieldDidChange(field:)), for: UIControl.Event.editingChanged)

@@ -14,7 +14,7 @@
 		3B32D7DD223FF1A70004911B /* BrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B32D7DC223FF1A70004911B /* BrowseView.swift */; };
 		3B32D7DF224014420004911B /* BrowseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B32D7DE224014420004911B /* BrowseViewController.swift */; };
 		3B32D7E1224018800004911B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B32D7E0224018800004911B /* ViewController.swift */; };
-		3B32D7E4224199530004911B /* KnownProblems.json in Resources */ = {isa = PBXBuildFile; fileRef = 3B32D7E222412DDD0004911B /* KnownProblems.json */; };
+		3B32D7E4224199530004911B /* PickABlockKnownProblems.json in Resources */ = {isa = PBXBuildFile; fileRef = 3B32D7E222412DDD0004911B /* PickABlockKnownProblems.json */; };
 		3B3D112E2236F5F500188EF0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3D112D2236F5F500188EF0 /* AppDelegate.swift */; };
 		3B3D11302236F5F500188EF0 /* SetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3D112F2236F5F500188EF0 /* SetViewController.swift */; };
 		3B3D11332236F5F500188EF0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3B3D11312236F5F500188EF0 /* Main.storyboard */; };
@@ -32,7 +32,7 @@
 		3B32D7DC223FF1A70004911B /* BrowseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseView.swift; sourceTree = "<group>"; };
 		3B32D7DE224014420004911B /* BrowseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowseViewController.swift; sourceTree = "<group>"; };
 		3B32D7E0224018800004911B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		3B32D7E222412DDD0004911B /* KnownProblems.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = KnownProblems.json; sourceTree = "<group>"; };
+		3B32D7E222412DDD0004911B /* PickABlockKnownProblems.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PickABlockKnownProblems.json; sourceTree = "<group>"; };
 		3B3D112A2236F5F500188EF0 /* PickABlock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PickABlock.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3D112D2236F5F500188EF0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3B3D112F2236F5F500188EF0 /* SetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetViewController.swift; sourceTree = "<group>"; };
@@ -85,9 +85,9 @@
 				3B32D7D222387A2B0004911B /* BlockProblemManager.swift */,
 				3B9B252822370AB300D03D34 /* ShapesCoords.swift */,
 				3B32D7D4223D28360004911B /* Shared.swift */,
-				3B3D11312236F5F500188EF0 /* Main.storyboard */,
-				3B32D7E222412DDD0004911B /* KnownProblems.json */,
+				3B32D7E222412DDD0004911B /* PickABlockKnownProblems.json */,
 				3B3D11342236F5F600188EF0 /* Assets.xcassets */,
+				3B3D11312236F5F500188EF0 /* Main.storyboard */,
 				3B3D11362236F5F600188EF0 /* LaunchScreen.storyboard */,
 				3B3D11392236F5F600188EF0 /* Info.plist */,
 			);
@@ -153,7 +153,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3B32D7E4224199530004911B /* KnownProblems.json in Resources */,
+				3B32D7E4224199530004911B /* PickABlockKnownProblems.json in Resources */,
 				3B3D11382236F5F600188EF0 /* LaunchScreen.storyboard in Resources */,
 				3B3D11352236F5F600188EF0 /* Assets.xcassets in Resources */,
 				3B3D11332236F5F500188EF0 /* Main.storyboard in Resources */,

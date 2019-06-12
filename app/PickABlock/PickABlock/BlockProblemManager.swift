@@ -87,11 +87,14 @@ class BlockProblemManager {
 
   var knownProblems: [Problem] = []
   var knownOverlays: [[CAShapeLayer]] = []
-  let knownProblemsFile = Bundle.main.path(forResource: "KnownProblems", ofType: "json")!
+  let knownProblemsFile = Bundle.main.path(forResource: "PickABlockKnownProblems", ofType: "json")!
   var knownProblemsIdx: Int = 0
 
   var userLocalStartIdx: Int = 0
-  var userLocalFile = URL.documentsURL.appendingPathComponent("UserLocalProblems.json")
+  var userLocalFile = URL.documentsURL.appendingPathComponent("PickABlockUserLocalProblems.json")
+
+  var infoLocalFile = URL.documentsURL.appendingPathComponent("PickABlockProblemsInfo.json")
+  var knownProblemsInfo: [UInt64 : String] = [:]
 
   var currentProblem: Problem = Problem()
 
