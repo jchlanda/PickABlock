@@ -32,14 +32,16 @@ extension OverlayColorPair: Equatable {
 struct Problem : Codable {
   init() {
     self.name = ""
+    self.created = ""
     self.begin = []
     self.end = []
     self.feetOnly = []
     self.normal = []
     self.overlays = [OverlayColorPair()]
   }
-  init(name: String, begin: [Int], end: [Int], feetOnly: [Int], normal: [Int], overlays: [OverlayColorPair]) {
+  init(name: String, created: String, begin: [Int], end: [Int], feetOnly: [Int], normal: [Int], overlays: [OverlayColorPair]) {
     self.name = name
+    self.created = created
     self.begin = begin
     self.end = end
     self.feetOnly = feetOnly
@@ -47,7 +49,22 @@ struct Problem : Codable {
     self.overlays = overlays
   }
 
+  // Swift hashValue is not deterministic and so can't be used across multiple execution of a program.
+  // Hash name + created + normal holds.
+  func hashValue() -> UInt64 {
+    var result = UInt64(5381)
+    let buf = [UInt8]((name + created).utf8)
+    for b in buf {
+      result = 127 * (result & 0x00ffffffffffffff) + UInt64(b)
+    }
+    for n in normal {
+      result = 127 * (result & 0x00ffffffffffffff) + UInt64(n)
+    }
+    return result
+  }
+
   var name: String
+  var created: String
   var begin: [Int]
   var end: [Int]
   var feetOnly: [Int]
@@ -98,6 +115,8 @@ class BlockProblemManager {
 
   var currentProblem: Problem = Problem()
 
+  let decoder = JSONDecoder()
+
   init() {
     knownProblems = loadProblemsFromFile(path: knownProblemsFile)
     userLocalStartIdx = knownProblems.count
@@ -107,7 +126,11 @@ class BlockProblemManager {
     } else {
       knownProblems.append(contentsOf: loadProblemsFromFile(path: userLocalFile.path))
     }
-
+    if !fileManager.fileExists(atPath: infoLocalFile.path) {
+      FileManager.default.createFile(atPath: infoLocalFile.path, contents: nil, attributes: nil)
+    } else {
+      knownProblemsInfo = loadProblemsInfoFromFile(path: infoLocalFile.path)
+    }
   }
 
   func loadProblemsFromFile(path: String) -> [Problem] {
@@ -117,13 +140,26 @@ class BlockProblemManager {
         return []
       }
       let data = try Data(contentsOf: URL(fileURLWithPath: path))
-      let decoder = JSONDecoder()
-
       let jsonData = try decoder.decode([Problem].self, from: data)
       return jsonData
     } catch {
       print("error:\(error)")
       return []
+    }
+  }
+
+  func loadProblemsInfoFromFile(path: String) -> [UInt64:String] {
+    do {
+      let contents = try NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue)
+      if (contents == "") {
+        return [:]
+      }
+      let data = try Data(contentsOf: URL(fileURLWithPath: path))
+      let jsonData = try decoder.decode([UInt64:String].self, from: data)
+      return jsonData
+    } catch {
+      print("error:\(error)")
+      return [:]
     }
   }
 
@@ -162,7 +198,7 @@ class BlockProblemManager {
       try data.write(to: path)
     }
     catch {
-      print("error:\(error)")
+      print("error:\n(error)")
     }
   }
 
@@ -300,7 +336,6 @@ class BlockProblemManager {
 
   func addManually(problems: String) -> String {
     do {
-      let decoder = JSONDecoder()
       let data = Data(problems.utf8)
       let manualProblems = try decoder.decode([Problem].self, from: data)
       var appended = 0
@@ -325,6 +360,18 @@ class BlockProblemManager {
     } catch {
       return error.localizedDescription
     }
+  }
+
+  func updateProblemInfo(info: String) -> String {
+    let data = Data(info.utf8)
+    do {
+      _ = try decoder.decode([UInt64:String].self, from: data)
+    } catch {
+      return "Error: The given data was not valid JSON."
+    }
+    saveProblemsInfo(path: infoLocalFile, data: data)
+    knownProblemsInfo = loadProblemsInfoFromFile(path: infoLocalFile.path)
+    return "Problem info updated successfully."
   }
 
   // Assumes there are no duplicates in built in problems.
@@ -365,6 +412,10 @@ class BlockProblemManager {
     return toDelete.count
   }
 
+  func setCreated() {
+    currentProblem.created = getTimeStamp()
+  }
+
   func add(index: Int, hold: inout CAShapeLayer, type: HoldType, isSticky: Bool) {
     var currType = type
     if (isSticky) {
@@ -399,6 +450,53 @@ class BlockProblemManager {
 
   func getKnownProblemName() -> String {
     return knownProblems[knownProblemsIdx].name
+  }
+
+  // Like for Problems, provide 3 steps:
+  // - serialize - produces data,
+  // - stringify - takes data, returns string,
+  // - write - takes data and puts it to a file.
+  func saveProblemsInfo(path: URL, data: Data) {
+    do {
+      try data.write(to: path)
+    } catch {
+      print("error:\n(error)")
+    }
+  }
+
+  func stringifyProblmesInfo() -> String {
+    let data = serializeProblemsInfo()
+    return String(data: data, encoding: String.Encoding.utf8)!
+  }
+
+  func serializeProblemsInfo() -> Data {
+    do {
+      return try JSONEncoder().encode(knownProblemsInfo)
+    } catch {
+      print("error:\n(error)")
+      return Data()
+    }
+  }
+
+  func getKnownProblemInfo() -> String {
+    let hash = knownProblems[knownProblemsIdx].hashValue()
+    var info = "created: " + knownProblems[knownProblemsIdx].created
+    if let notes = knownProblemsInfo[hash] {
+      info += "\n\nnotes:\n" + notes
+    }
+    return info
+  }
+
+  func addKnownProblemInfo(info: String) {
+    let hash = knownProblems[knownProblemsIdx].hashValue()
+    if var notes = knownProblemsInfo[hash] {
+      notes += "\n" + info
+      knownProblemsInfo[hash] = notes
+    } else {
+      knownProblemsInfo[hash] = info
+    }
+    let data = serializeProblemsInfo()
+    saveProblemsInfo(path: infoLocalFile, data: data)
   }
 
   func consumeColoredOverlayPaths(problem: inout Problem, overlayShapePath: [ColoredOverlayPath]) {
@@ -451,6 +549,13 @@ class BlockProblemManager {
 
   func deleteProblem() {
     if let idx = knownProblems.firstIndex(where: { $0 == currentProblem }) {
+      // Check if problem has info
+      let hash = knownProblems[idx].hashValue()
+      if knownProblemsInfo[hash] != nil {
+        knownProblemsInfo.removeValue(forKey: hash)
+        let data = serializeProblemsInfo()
+        saveProblemsInfo(path: infoLocalFile, data: data)
+      }
       knownProblems.remove(at: idx)
       // No more user local problems, clear the file.
       if (knownProblems.count >= userLocalStartIdx) {
@@ -474,6 +579,35 @@ class BlockProblemManager {
         knownProblemsIdx = knownProblems.count - 1
       }
     }
+  }
+
+  func getTimeStamp() -> String {
+    let date = Date()
+    let calendar = Calendar.current
+    let day = calendar.component(.day, from: date)
+    let month = calendar.component(.month, from: date)
+    let year = calendar.component(.year, from: date)
+    let hour = calendar.component(.hour, from: date)
+    let minutes = calendar.component(.minute, from: date)
+
+    let romanMonth: String
+    switch month {
+    case 1: romanMonth = "I"
+    case 2: romanMonth = "II"
+    case 3: romanMonth = "III"
+    case 4: romanMonth = "IV"
+    case 5: romanMonth = "V"
+    case 6: romanMonth = "VI"
+    case 7: romanMonth = "VII"
+    case 8: romanMonth = "VIII"
+    case 9: romanMonth = "IX"
+    case 10: romanMonth = "X"
+    case 11: romanMonth = "XI"
+    case 12: romanMonth = "XII"
+    default: romanMonth = "Roman literals, eh!"
+    }
+
+    return String(day) + " " + String(romanMonth) + " " + String(year) + "  " + String(hour) + ":" + String(minutes)
   }
 }
 

@@ -29,6 +29,45 @@ class BrowseView: ImageScrollView {
     superview?.addSubview(nextButton)
     superview?.addSubview(prevButton)
     setTitle()
+    let share = navigationController!.viewControllers[1].navigationItem.rightBarButtonItems![0]
+    let commentButton = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action:
+        #selector(self.commentButtonPressed))
+        // #selector(self.shareButtonPressed2))
+
+    navigationController!.viewControllers[1].navigationItem.rightBarButtonItems = [share, commentButton]
+  }
+
+  func showCommentDialogue() {
+    var textField: UITextField?
+    let title = getBlockProblemManager().getKnownProblemName()
+    let message = getBlockProblemManager().getKnownProblemInfo()
+    let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+    alertController.view.tintColor = Defs.RedStroke
+
+    alertController.addTextField { (pTextField) in
+      pTextField.text = "[" + self.getBlockProblemManager().getTimeStamp() + "] "
+      pTextField.placeholder = "Add info."
+      pTextField.clearButtonMode = .whileEditing
+      pTextField.borderStyle = .none
+      pTextField.addTarget(self, action: #selector(self.alertTextFieldDidChange(field:)), for: UIControl.Event.editingChanged)
+      textField = pTextField
+    }
+    alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (pAction) in
+      alertController.dismiss(animated: true, completion: nil)
+    }))
+    let okAction = UIAlertAction(title: "OK", style: .default, handler: { (pAction) in
+      let info = textField?.text ?? ""
+      self.getBlockProblemManager().addKnownProblemInfo(info: info)
+      alertController.dismiss(animated: true, completion: nil)
+    })
+    okAction.isEnabled = false
+    alertController.addAction(okAction)
+    let vc = findViewController()
+    vc?.present(alertController, animated: true, completion: nil)
+  }
+
+  @objc func commentButtonPressed(sender: UIView) {
+    showCommentDialogue()
   }
 
   @objc func nextButtonAction() {

@@ -9,22 +9,25 @@
 import UIKit
 
 class SettingsViewController: ViewController, UITextViewDelegate {
+  var scrollView: UIScrollView!
+
   var userLocalProblemsTextField = UITextView()
   var AMTV = UITextView()
   var AM = UIButton()
 
-  let scrollView: UIScrollView = {
-    let v = UIScrollView()
-    v.translatesAutoresizingMaskIntoConstraints = false
-    return v
-  }()
+  var CTV = UITextView()
+  var C = UIButton()
 
   lazy var yOffset = UIApplication.shared.statusBarFrame.height + (navigationController?.navigationBar.frame.height)!
 
   override func viewDidLoad() {
     super.viewDidLoad()
 
-    self.view.addSubview(scrollView)
+    let screensize: CGRect = UIScreen.main.bounds
+    let screenWidth = screensize.width
+    let screenHeight = screensize.height
+    var scrollView: UIScrollView!
+    scrollView = UIScrollView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
 
     let shareButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(self.shareButtonPressed))
     let navigationController = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController
@@ -58,28 +61,53 @@ class SettingsViewController: ViewController, UITextViewDelegate {
     yUsed += 10
     yUsed += 10
 
+    let CL = UILabel(frame: CGRect(x: 10, y: yUsed, width: 220, height: 35))
+    CL.text = "Edit notes:"
+    scrollView.addSubview(CL)
+    yUsed += 35
+    CTV = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "Update notes")
+    CTV.delegate = self
+    CTV.text = BPM.stringifyProblmesInfo()
+    scrollView.addSubview(CTV)
+    yUsed += Int(textFieldY)
+    yUsed += 10
+    C.setUpLayer(button: C, displayName: "Submit", x: 10, y: yUsed, width: 220, height: 35)
+    C.addTarget(self, action: #selector(editNotesAction), for: .touchUpInside)
+    scrollView.addSubview(C)
+    yUsed += 35
+    yUsed += 10
+    yUsed += 10
+
+    let AML = UILabel(frame: CGRect(x: 10, y: yUsed, width: 220, height: 35))
+    AML.text = "Add manually:"
+    scrollView.addSubview(AML)
+    yUsed += 35
     AMTV = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "Add manually")
     AMTV.delegate = self
     scrollView.addSubview(AMTV)
     yUsed += Int(textFieldY)
     yUsed += 10
-    AM.setUpLayer(button: AM, displayName: "Add manually", x: 10, y: yUsed, width: 220, height: 35)
+    AM.setUpLayer(button: AM, displayName: "Submit", x: 10, y: yUsed, width: 220, height: 35)
     AM.addTarget(self, action: #selector(addManuallyAction), for: .touchUpInside)
-    AM.isEnabled = false
     scrollView.addSubview(AM)
     yUsed += 35
     yUsed += 10
     yUsed += 10
 
+    let PDL = UILabel(frame: CGRect(x: 10, y: yUsed, width: 220, height: 35))
+    PDL.text = "Purge duplicates:"
+    scrollView.addSubview(PDL)
+    yUsed += 35
     let PD = UIButton()
-    PD.setUpLayer(button: PD, displayName: "Purge duplicates", x: 10, y: yUsed, width: 220, height: 35)
+    PD.setUpLayer(button: PD, displayName: "Submit", x: 10, y: yUsed, width: 220, height: 35)
     PD.addTarget(self, action: #selector(purgeDuplicatesAction), for: .touchUpInside)
     scrollView.addSubview(PD)
+    yUsed += 35
+    yUsed += 10
+    yUsed += 10
 
-    scrollView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
-    scrollView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
-    scrollView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
-    scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+    scrollView.contentSize = CGSize(width: screenWidth, height: CGFloat(yUsed))
+    view.addSubview(scrollView)
   }
 
   func getTextView(frame: CGRect, placecholder: String) -> UITextView {
@@ -96,8 +124,15 @@ class SettingsViewController: ViewController, UITextViewDelegate {
     return tv
   }
 
-  func textViewDidChange(_ textView: UITextView){
-    AM.isEnabled = (textView.text?.count)! >= 1;
+  @objc func editNotesAction(_ sender: Any) {
+    let title = BPM.updateProblemInfo(info: CTV.text!)
+    let alertController = UIAlertController(title: title, message: "", preferredStyle: .alert)
+    alertController.view.tintColor = Defs.RedStroke
+    alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { (pAction) in
+      alertController.dismiss(animated: true, completion: nil)
+    }))
+    CTV.text = BPM.stringifyProblmesInfo()
+    present(alertController, animated: true, completion: nil)
   }
 
   @objc func addManuallyAction(_ sender: Any) {
@@ -133,16 +168,13 @@ class SettingsViewController: ViewController, UITextViewDelegate {
   }
 
   @objc func shareButtonPressed(sender: UIView) {
-    UIGraphicsBeginImageContext(scrollView.frame.size)
-    scrollView.layer.render(in: UIGraphicsGetCurrentContext()!)
-    UIGraphicsEndImageContext()
-
     let userLocalIdx = BPM.getUserLocalStartIdx()
-    var toShare = "Build In Problems:\n["
+    var toShare = "Build In Problems:\n"
     toShare.append(BPM.stringifyProblems(startIdx: 0, endIdx: userLocalIdx - 1))
-    toShare.append("]\n\nUser Local Problems:\n[")
+    toShare.append("\n\nUser Local Problems:\n")
     toShare.append(BPM.stringifyProblems(startIdx: userLocalIdx, endIdx: BPM.getNumKnownProblems() - 1))
-    toShare.append("]")
+    toShare.append("\n\nProblems Info:\n")
+    toShare.append(BPM.stringifyProblmesInfo())
     let problemToShare = [toShare] as [Any]
     let activityVC = UIActivityViewController(activityItems: problemToShare, applicationActivities: nil)
     //Excluded Activities

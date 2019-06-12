@@ -197,6 +197,14 @@ class ImageScrollView: UIScrollView, UIScrollViewDelegate {
     activityVC.popoverPresentationController?.sourceView = sender
     vc.present(activityVC, animated: true, completion: nil)
   }
+
+  @objc func alertTextFieldDidChange(field: UITextField){
+    let vc = findViewController()
+    let alertController:UIAlertController = vc?.presentedViewController as! UIAlertController;
+    let textField: UITextField  = alertController.textFields![0];
+    let addAction: UIAlertAction = alertController.actions[1];
+    addAction.isEnabled = (textField.text?.count)! >= 1;
+  }
 }
 
 extension UIView {

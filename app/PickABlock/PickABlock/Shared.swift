@@ -65,6 +65,20 @@ struct Defs {
 
     return control
   }
+
+  static func getTextView(frame: CGRect, placecholder: String) -> UITextView {
+    let tv = UITextView(frame: frame)
+    tv.font = UIFont.systemFont(ofSize: 15)
+    tv.layer.borderColor = Defs.DarkRed.cgColor
+    tv.layer.cornerRadius = 15.0
+    tv.layer.borderWidth = 1.0
+    tv.tintColor = Defs.DarkRed
+    tv.keyboardType = UIKeyboardType.default
+    tv.returnKeyType = UIReturnKeyType.done
+    tv.textContainer.lineBreakMode = .byCharWrapping
+
+    return tv
+  }
 }
 
 extension UIButton

@@ -277,14 +277,6 @@ class SetView: ImageScrollView {
     }
   }
 
-  @objc func alertTextFieldDidChange(field: UITextField){
-    let vc = findViewController()
-    let alertController:UIAlertController = vc?.presentedViewController as! UIAlertController;
-    let textField: UITextField  = alertController.textFields![0];
-    let addAction: UIAlertAction = alertController.actions[1];
-    addAction.isEnabled = (textField.text?.count)! >= 1;
-  }
-
   func setColorPickerVisibility(isHidden: Bool) {
     self.colorSegment.isHidden = isHidden
     self.slider.isHidden = isHidden
@@ -345,6 +337,7 @@ class SetView: ImageScrollView {
     let okAction = UIAlertAction(title: "OK", style: .default, handler: { (pAction) in
       self.setColorPickerVisibility(isHidden: true)
       let problemName = textField?.text ?? ""
+      self.getBlockProblemManager().setCreated()
       self.getBlockProblemManager().serialize(name: problemName, overlays: self.overlayPaths)
       alertController.dismiss(animated: true, completion: nil)
       self.setTwoFingerPan(on: false)
