@@ -334,6 +334,41 @@ class BlockProblemManager {
     return -1
   }
 
+  func updateAll(info: String) -> String {
+    var addedProblems = false
+    var addedInfo = false
+    let lines = info.split { $0.isNewline }
+    for (idx, line) in lines.enumerated() {
+      if (line == "Build In Problems:") {
+        if ("No new problems appended." != addManually(problems: String(lines[idx + 1]))) {
+          addedProblems = true
+        }
+      } else if (line == "User Local Problems:") {
+        if ("No new problems appended." != addManually(problems: String(lines[idx + 1]))) {
+          addedProblems = true
+        }
+      } else if (line == "Problems Info:") {
+        if (String(lines[idx + 1]) != "[]") {
+          _ = updateProblemInfo(info: String(lines[idx + 1]))
+          addedInfo = true
+        }
+      }
+    }
+
+    var message = ""
+    if (addedProblems && addedInfo) {
+      message = "Added new problems and problems info."
+    } else if (addedProblems) {
+      message = "Added new problems."
+    } else if (addedInfo) {
+      message = "Added problems info."
+    } else {
+      message = "No new information found."
+    }
+
+    return message
+  }
+
   func addManually(problems: String) -> String {
     do {
       let data = Data(problems.utf8)
@@ -464,7 +499,7 @@ class BlockProblemManager {
     }
   }
 
-  func stringifyProblmesInfo() -> String {
+  func stringifyProblemsInfo() -> String {
     let data = serializeProblemsInfo()
     return String(data: data, encoding: String.Encoding.utf8)!
   }

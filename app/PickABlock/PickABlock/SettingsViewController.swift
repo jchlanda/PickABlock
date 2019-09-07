@@ -13,7 +13,9 @@ class SettingsViewController: ViewController, UITextViewDelegate {
 
   var userLocalProblemsTextField = UITextView()
   var AMTV = UITextView()
+  var UATV = UITextView()
   var AM = UIButton()
+  var SA = UIButton()
 
   var CTV = UITextView()
   var C = UIButton()
@@ -71,7 +73,7 @@ class SettingsViewController: ViewController, UITextViewDelegate {
     yUsed += 35
     CTV = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "Update notes")
     CTV.delegate = self
-    CTV.text = BPM.stringifyProblmesInfo()
+    CTV.text = BPM.stringifyProblemsInfo()
     scrollView.addSubview(CTV)
     yUsed += Int(textFieldY)
     yUsed += 10
@@ -83,10 +85,10 @@ class SettingsViewController: ViewController, UITextViewDelegate {
     yUsed += 10
 
     let AML = UILabel(frame: CGRect(x: 10, y: yUsed, width: 220, height: 35))
-    AML.text = "Add manually:"
+    AML.text = "Add problems manually:"
     scrollView.addSubview(AML)
     yUsed += 35
-    AMTV = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "Add manually")
+    AMTV = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "Add problems manually")
     AMTV.delegate = self
     scrollView.addSubview(AMTV)
     yUsed += Int(textFieldY)
@@ -94,6 +96,22 @@ class SettingsViewController: ViewController, UITextViewDelegate {
     AM.setUpLayer(button: AM, displayName: "Submit", x: 10, y: yUsed, width: 220, height: 35)
     AM.addTarget(self, action: #selector(addManuallyAction), for: .touchUpInside)
     scrollView.addSubview(AM)
+    yUsed += 35
+    yUsed += 10
+    yUsed += 10
+
+    let UAL = UILabel(frame: CGRect(x: 10, y: yUsed, width: 220, height: 35))
+    UAL.text = "Update all:"
+    scrollView.addSubview(UAL)
+    yUsed += 35
+    UATV = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "Update all")
+    UATV.delegate = self
+    scrollView.addSubview(UATV)
+    yUsed += Int(textFieldY)
+    yUsed += 10
+    SA.setUpLayer(button: SA, displayName: "Submit", x: 10, y: yUsed, width: 220, height: 35)
+    SA.addTarget(self, action: #selector(updateAll), for: .touchUpInside)
+    scrollView.addSubview(SA)
     yUsed += 35
     yUsed += 10
     yUsed += 10
@@ -135,12 +153,22 @@ class SettingsViewController: ViewController, UITextViewDelegate {
     alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { (pAction) in
       alertController.dismiss(animated: true, completion: nil)
     }))
-    CTV.text = BPM.stringifyProblmesInfo()
+    CTV.text = BPM.stringifyProblemsInfo()
     present(alertController, animated: true, completion: nil)
   }
 
   @objc func addManuallyAction(_ sender: Any) {
     let title = BPM.addManually(problems: AMTV.text!)
+    let alertController = UIAlertController(title: title, message: "", preferredStyle: .alert)
+    alertController.view.tintColor = Defs.RedStroke
+    alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { (pAction) in
+      alertController.dismiss(animated: true, completion: nil)
+    }))
+    present(alertController, animated: true, completion: nil)
+  }
+
+  @objc func updateAll(_ sender: Any) {
+    let title = BPM.updateAll(info: UATV.text!)
     let alertController = UIAlertController(title: title, message: "", preferredStyle: .alert)
     alertController.view.tintColor = Defs.RedStroke
     alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { (pAction) in
@@ -171,14 +199,21 @@ class SettingsViewController: ViewController, UITextViewDelegate {
     present(alertController, animated: true, completion: nil)
   }
 
-  @objc func shareButtonPressed(sender: UIView) {
+  func getAllData() -> String {
     let userLocalIdx = BPM.getUserLocalStartIdx()
-    var toShare = "Build In Problems:\n"
-    toShare.append(BPM.stringifyProblems(startIdx: 0, endIdx: userLocalIdx - 1))
-    toShare.append("\n\nUser Local Problems:\n")
-    toShare.append(BPM.stringifyProblems(startIdx: userLocalIdx, endIdx: BPM.getNumKnownProblems() - 1))
-    toShare.append("\n\nProblems Info:\n")
-    toShare.append(BPM.stringifyProblmesInfo())
+    var allData = BPM.getTimeStamp()
+    allData.append("\nBuild In Problems:\n")
+    allData.append(BPM.stringifyProblems(startIdx: 0, endIdx: userLocalIdx - 1))
+    allData.append("\n\nUser Local Problems:\n")
+    allData.append(BPM.stringifyProblems(startIdx: userLocalIdx, endIdx: BPM.getNumKnownProblems() - 1))
+    allData.append("\n\nProblems Info:\n")
+    allData.append(BPM.stringifyProblemsInfo())
+
+    return allData
+  }
+
+  @objc func shareButtonPressed(sender: UIView) {
+    let toShare = getAllData()
     let problemToShare = [toShare] as [Any]
     let activityVC = UIActivityViewController(activityItems: problemToShare, applicationActivities: nil)
     //Excluded Activities
