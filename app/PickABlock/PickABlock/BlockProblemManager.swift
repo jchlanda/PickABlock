@@ -205,7 +205,7 @@ class BlockProblemManager {
   // Both inclusive.
   func stringifyProblems(startIdx: Int, endIdx: Int) -> String {
     if (endIdx < startIdx) {
-      return ""
+      return "[]"
     }
     let data = serializeProblems(startIdx: startIdx, endIdx: endIdx)
     return String(data: data, encoding: String.Encoding.utf8)!
@@ -607,7 +607,11 @@ class BlockProblemManager {
     default: romanMonth = "Roman literals, eh!"
     }
 
-    return String(day) + " " + String(romanMonth) + " " + String(year) + "  " + String(hour) + ":" + String(minutes)
+    var minutesString = String(minutes)
+    if (minutes < 10) {
+      minutesString = "0\(minutesString)"
+    }
+    return String(day) + " " + String(romanMonth) + " " + String(year) + "  " + String(hour) + ":" + minutesString
   }
 }
 
