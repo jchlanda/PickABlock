@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0B36E675227A41050078A04E /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B36E674227A41050078A04E /* SettingsViewController.swift */; };
+		0BC688DB2324523A00FD1485 /* PickABlockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC688DA2324523A00FD1485 /* PickABlockTests.swift */; };
 		3B32D7D322387A2B0004911B /* BlockProblemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B32D7D222387A2B0004911B /* BlockProblemManager.swift */; };
 		3B32D7D5223D28360004911B /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B32D7D4223D28360004911B /* Shared.swift */; };
 		3B32D7DB223E5DB60004911B /* ImageScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B32D7DA223E5DB60004911B /* ImageScrollView.swift */; };
@@ -24,8 +25,21 @@
 		3B9B252922370AB300D03D34 /* ShapesCoords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9B252822370AB300D03D34 /* ShapesCoords.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		0BC688DD2324523A00FD1485 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3B3D11222236F5F500188EF0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3B3D11292236F5F500188EF0;
+			remoteInfo = PickABlock;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		0B36E674227A41050078A04E /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		0BC688D82324523A00FD1485 /* PickABlockTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PickABlockTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0BC688DA2324523A00FD1485 /* PickABlockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickABlockTests.swift; sourceTree = "<group>"; };
+		0BC688DC2324523A00FD1485 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3B32D7D222387A2B0004911B /* BlockProblemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockProblemManager.swift; sourceTree = "<group>"; };
 		3B32D7D4223D28360004911B /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared.swift; sourceTree = "<group>"; };
 		3B32D7DA223E5DB60004911B /* ImageScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageScrollView.swift; sourceTree = "<group>"; };
@@ -45,6 +59,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0BC688D52324523A00FD1485 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3B3D11272236F5F500188EF0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -55,10 +76,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0BC688D92324523A00FD1485 /* PickABlockTests */ = {
+			isa = PBXGroup;
+			children = (
+				0BC688DA2324523A00FD1485 /* PickABlockTests.swift */,
+				0BC688DC2324523A00FD1485 /* Info.plist */,
+			);
+			path = PickABlockTests;
+			sourceTree = "<group>";
+		};
 		3B3D11212236F5F500188EF0 = {
 			isa = PBXGroup;
 			children = (
 				3B3D112C2236F5F500188EF0 /* PickABlock */,
+				0BC688D92324523A00FD1485 /* PickABlockTests */,
 				3B3D112B2236F5F500188EF0 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -67,6 +98,7 @@
 			isa = PBXGroup;
 			children = (
 				3B3D112A2236F5F500188EF0 /* PickABlock.app */,
+				0BC688D82324523A00FD1485 /* PickABlockTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -97,6 +129,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0BC688D72324523A00FD1485 /* PickABlockTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0BC688E12324523A00FD1485 /* Build configuration list for PBXNativeTarget "PickABlockTests" */;
+			buildPhases = (
+				0BC688D42324523A00FD1485 /* Sources */,
+				0BC688D52324523A00FD1485 /* Frameworks */,
+				0BC688D62324523A00FD1485 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0BC688DE2324523A00FD1485 /* PBXTargetDependency */,
+			);
+			name = PickABlockTests;
+			productName = PickABlockTests;
+			productReference = 0BC688D82324523A00FD1485 /* PickABlockTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		3B3D11292236F5F500188EF0 /* PickABlock */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3B3D113C2236F5F600188EF0 /* Build configuration list for PBXNativeTarget "PickABlock" */;
@@ -120,10 +170,14 @@
 		3B3D11222236F5F500188EF0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1010;
+				LastSwiftUpdateCheck = 1030;
 				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = Jakub;
 				TargetAttributes = {
+					0BC688D72324523A00FD1485 = {
+						CreatedOnToolsVersion = 10.3;
+						TestTargetID = 3B3D11292236F5F500188EF0;
+					};
 					3B3D11292236F5F500188EF0 = {
 						CreatedOnToolsVersion = 10.1;
 						LastSwiftMigration = 1020;
@@ -144,11 +198,19 @@
 			projectRoot = "";
 			targets = (
 				3B3D11292236F5F500188EF0 /* PickABlock */,
+				0BC688D72324523A00FD1485 /* PickABlockTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		0BC688D62324523A00FD1485 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3B3D11282236F5F500188EF0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -163,6 +225,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0BC688D42324523A00FD1485 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0BC688DB2324523A00FD1485 /* PickABlockTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3B3D11262236F5F500188EF0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -182,6 +252,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0BC688DE2324523A00FD1485 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3B3D11292236F5F500188EF0 /* PickABlock */;
+			targetProxy = 0BC688DD2324523A00FD1485 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		3B3D11312236F5F500188EF0 /* Main.storyboard */ = {
@@ -203,6 +281,48 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		0BC688DF2324523A00FD1485 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = R6K8U2363K;
+				INFOPLIST_FILE = PickABlockTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = Woof.PickABlockTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PickABlock.app/PickABlock";
+			};
+			name = Debug;
+		};
+		0BC688E02324523A00FD1485 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = R6K8U2363K;
+				INFOPLIST_FILE = PickABlockTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = Woof.PickABlockTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PickABlock.app/PickABlock";
+			};
+			name = Release;
+		};
 		3B3D113A2236F5F600188EF0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -366,6 +486,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0BC688E12324523A00FD1485 /* Build configuration list for PBXNativeTarget "PickABlockTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0BC688DF2324523A00FD1485 /* Debug */,
+				0BC688E02324523A00FD1485 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		3B3D11252236F5F500188EF0 /* Build configuration list for PBXProject "PickABlock" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
