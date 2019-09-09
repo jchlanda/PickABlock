@@ -256,7 +256,7 @@ class SetView: ImageScrollView {
       let point = touch!.location(in: self.zoomView)
       overlayPath.addLine(to: point)
 
-      var simplifiedOverlayPath = overlayPath.cgPath.ramerDouglasPeuckerPoints
+      let simplifiedOverlayPath = overlayPath.cgPath.ramerDouglasPeuckerPoints
       if (simplifiedOverlayPath.count < 2) {
         return
       }
