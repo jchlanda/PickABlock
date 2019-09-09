@@ -1,6 +1,9 @@
 # PickABlock
 I do a lot of climbing at a section of the wall that is completely covered with holds. While there are some problems set there, I spend most of the time climbing my own problems/circuits. I find it hard to remember individual problems, especially, as the time passes and the number of problems grows. As a solution (or workaround, if you like), I was taking pictures of the wall and [doodling the problems on them](https://github.com/jchlanda/PickABlock/blob/readme_assets/readme_assets/LT_11.jpg). Being a programmer I am, I soon came to the conclusion that there must be a better way and PickABlock was born. Now is the right time for a little disclaimer, this is a poor man's version of [Stokt](https://www.getstokt.com/) and if you can use it (they will be adding support for home walls soon) you probably should; Stokt is infinitely better than a humble PickABlock. And while I do programming for living app design and working with swift saw me venturing into the unknown (give me a shout if you ever need a compiler backend for your new generation of a chip and I'll shine). With that out of the way, here are more details on PickABlock.
 
+## Build Status
+[![Build Status](https://travis-ci.org/jchlanda/PickABlock.svg?branch=master)](https://travis-ci.org/jchlanda/PickABlock)
+
 ## Intended use case
 <img align="right" width="404" height="720" src="https://github.com/jchlanda/PickABlock/blob/readme_assets/readme_assets/PickABlock.gif">
 
