@@ -578,41 +578,45 @@ class BlockProblemManager {
     }
   }
 
-  func canDeleteProblem() -> Bool {
+  func isUserDefined() -> Bool {
     return knownProblemsIdx >= userLocalStartIdx
   }
 
-  func deleteProblem() {
+  func deleteCurrentProblem() {
     if let idx = knownProblems.firstIndex(where: { $0 == currentProblem }) {
-      // Check if problem has info
-      let hash = knownProblems[idx].hashValue()
-      if knownProblemsInfo[hash] != nil {
-        knownProblemsInfo.removeValue(forKey: hash)
-        let data = serializeProblemsInfo()
-        saveProblemsInfo(path: infoLocalFile, data: data)
+      deleteProblemAtIdx(idx: idx)
+    }
+  }
+
+  func deleteProblemAtIdx(idx: Int) {
+    // Check if problem has info
+    let hash = knownProblems[idx].hashValue()
+    if knownProblemsInfo[hash] != nil {
+      knownProblemsInfo.removeValue(forKey: hash)
+      let data = serializeProblemsInfo()
+      saveProblemsInfo(path: infoLocalFile, data: data)
+    }
+    knownProblems.remove(at: idx)
+    // No more user local problems, clear the file.
+    if (knownProblems.count >= userLocalStartIdx) {
+      do {
+        try Data().write(to: userLocalFile)
+      } catch {
+        print(error)
+        return
       }
-      knownProblems.remove(at: idx)
-      // No more user local problems, clear the file.
-      if (knownProblems.count >= userLocalStartIdx) {
-        do {
-          try Data().write(to: userLocalFile)
-        } catch {
-          print(error)
-          return
-        }
-      } else {
-        saveUserLocalProblems(path: userLocalFile, startIdx: userLocalStartIdx, endIdx: knownProblems.count - 1)
-      }
-      for o in knownOverlays[idx] {
-        o.isHidden = true
-      }
-      knownOverlays.remove(at: idx)
-      if (knownProblemsIdx > 0) {
-        knownProblemsIdx -= 1
-      }
-      else {
-        knownProblemsIdx = knownProblems.count - 1
-      }
+    } else {
+      saveUserLocalProblems(path: userLocalFile, startIdx: userLocalStartIdx, endIdx: knownProblems.count - 1)
+    }
+    for o in knownOverlays[idx] {
+      o.isHidden = true
+    }
+    knownOverlays.remove(at: idx)
+    if (knownProblemsIdx > 0) {
+      knownProblemsIdx -= 1
+    }
+    else {
+      knownProblemsIdx = knownProblems.count - 1
     }
   }
 

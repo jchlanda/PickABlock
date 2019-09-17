@@ -81,14 +81,14 @@ class BrowseView: ImageScrollView {
   }
 
   func confirmDelete() {
-    let canDelete = getBlockProblemManager().canDeleteProblem()
+    let canDelete = getBlockProblemManager().isUserDefined()
     let alertController = UIAlertController(title: "", message: "", preferredStyle: .alert)
     alertController.view.tintColor = Defs.RedStroke
 
     if canDelete {
       alertController.title = "Are you sure you want to delete a problem?"
       let okAction = UIAlertAction(title: "OK", style: .default, handler: { (pAction) in
-        self.getBlockProblemManager().deleteProblem()
+        self.getBlockProblemManager().deleteCurrentProblem()
         self.nextButtonAction()
         alertController.dismiss(animated: true, completion: nil)
       })

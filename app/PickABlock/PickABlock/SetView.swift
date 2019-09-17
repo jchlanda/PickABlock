@@ -35,7 +35,7 @@ class SetView: ImageScrollView {
 
   override func display(_ image: UIImage) {
     super.display(image)
-    mainSegment.addTarget(self, action: #selector(SetView.mainSegmentedControlHandler(_:)), for: .valueChanged)
+    mainSegment.addTarget(self, action: #selector(SetView.mainSegmentControlHandler(_:)), for: .valueChanged)
     superview?.addSubview(mainSegment)
     superview?.addSubview(colorSegment)
     slider = setUpSlider()
@@ -299,7 +299,11 @@ class SetView: ImageScrollView {
 
     alertController.addAction(UIAlertAction(title: "No", style: .cancel, handler: { (pAction) in
       alertController.dismiss(animated: true, completion: nil)
-      self.showSubmit()
+      if self.EditMode && self.getBlockProblemManager().isUserDefined() {
+        self.showEditInPlace()
+      } else {
+        self.showSubmit()
+      }
       self.overlayMode = false
       self.setColorPickerVisibility(isHidden: true)
     }))
@@ -312,7 +316,33 @@ class SetView: ImageScrollView {
     }))
     let vc = findViewController()
     vc?.present(alertController, animated: true, completion: nil)
+  }
 
+  func showEditInPlace() {
+    self.EditMode = false
+    let vc = findViewController()
+    let alertController = UIAlertController(title: "Edit in place?", message: "", preferredStyle: .alert)
+    alertController.view.tintColor = Defs.RedStroke
+
+    alertController.addAction(UIAlertAction(title: "No", style: .cancel, handler: { (pAction) in
+      alertController.dismiss(animated: true, completion: nil)
+    }))
+    alertController.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (pAction) in
+      let problemIdx = self.getBlockProblemManager().getKnownProblemIdx()
+      let problemName = self.getBlockProblemManager().getKnownProblemName()
+      self.getBlockProblemManager().deleteProblemAtIdx(idx: problemIdx)
+      self.getBlockProblemManager().setCreated()
+      self.getBlockProblemManager().serialize(name: problemName, overlays: self.overlayPaths)
+      alertController.dismiss(animated: true, completion: nil)
+      self.setTwoFingerPan(on: false)
+      let successAlertController = UIAlertController(title: problemName + " edited successfully.", message: "", preferredStyle: .alert)
+      successAlertController.view.tintColor = Defs.RedStroke
+      successAlertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { (pAction) in
+        successAlertController.dismiss(animated: true, completion: nil)
+      }))
+      vc?.present(successAlertController, animated: true, completion: nil)
+    }))
+    vc?.present(alertController, animated: true, completion: nil)
   }
 
   func showSubmit() {
@@ -353,7 +383,7 @@ class SetView: ImageScrollView {
     vc?.present(alertController, animated: true, completion: nil)
   }
 
-  @objc func mainSegmentedControlHandler(_ sender: UISegmentedControl) {
+  @objc func mainSegmentControlHandler(_ sender: UISegmentedControl) {
     switch sender.selectedSegmentIndex {
     case 0: // Cancel
       if (overlayMode) {
@@ -371,7 +401,11 @@ class SetView: ImageScrollView {
       if (!overlayMode) {
         showAddOverlay()
       } else {
-        showSubmit()
+        if self.EditMode && self.getBlockProblemManager().isUserDefined() {
+          self.showEditInPlace()
+        } else {
+          showSubmit()
+        }
       }
       break
     default:
