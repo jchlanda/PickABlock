@@ -11,7 +11,7 @@ import UIKit
 class SettingsViewController: ViewController, UITextViewDelegate {
   var scrollView: UIScrollView!
 
-  var userLocalProblemsTextField = UITextView()
+  var ULPTV = UITextView()
   var AMTV = UITextView()
   var UATV = UITextView()
   var AM = UIButton()
@@ -44,19 +44,21 @@ class SettingsViewController: ViewController, UITextViewDelegate {
     var yUsed = 10
     let UDP = UILabel(frame: CGRect(x: 10, y: yUsed, width: 220, height: 35))
     UDP.text = "User Defined Problems:"
+    UDP.textColor = Defs.DarkRed
     scrollView.addSubview(UDP)
     yUsed += 35
-    userLocalProblemsTextField = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "User Local Problems")
+    ULPTV = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "User Local Problems")
     if (BPM.hasUserLocalProblems()) {
-      userLocalProblemsTextField.text = BPM.stringifyProblems(startIdx: BPM.getUserLocalStartIdx(), endIdx: BPM.getNumKnownProblems() - 1)
+      ULPTV.text = BPM.stringifyProblems(startIdx: BPM.getUserLocalStartIdx(), endIdx: BPM.getNumKnownProblems() - 1)
     }
-    scrollView.addSubview(userLocalProblemsTextField)
+    scrollView.addSubview(ULPTV)
     yUsed += Int(textFieldY)
     yUsed += 10
     yUsed += 10
 
     let BIP = UILabel(frame: CGRect(x: 10, y: yUsed, width: 220, height: 35))
     BIP.text = "Build In Problems:"
+    BIP.textColor = Defs.DarkRed
     scrollView.addSubview(BIP)
     yUsed += 35
     let buildInProblems = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "Build In Problems")
@@ -69,6 +71,7 @@ class SettingsViewController: ViewController, UITextViewDelegate {
 
     let CL = UILabel(frame: CGRect(x: 10, y: yUsed, width: 220, height: 35))
     CL.text = "Edit notes:"
+    CL.textColor = Defs.DarkRed
     scrollView.addSubview(CL)
     yUsed += 35
     CTV = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "Update notes")
@@ -86,6 +89,7 @@ class SettingsViewController: ViewController, UITextViewDelegate {
 
     let AML = UILabel(frame: CGRect(x: 10, y: yUsed, width: 220, height: 35))
     AML.text = "Add problems manually:"
+    AML.textColor = Defs.DarkRed
     scrollView.addSubview(AML)
     yUsed += 35
     AMTV = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "Add problems manually")
@@ -102,6 +106,7 @@ class SettingsViewController: ViewController, UITextViewDelegate {
 
     let UAL = UILabel(frame: CGRect(x: 10, y: yUsed, width: 220, height: 35))
     UAL.text = "Update all:"
+    UAL.textColor = Defs.DarkRed
     scrollView.addSubview(UAL)
     yUsed += 35
     UATV = getTextView(frame: CGRect(x: 10, y: CGFloat(yUsed), width: self.view.frame.maxX - 2 * 10 , height: textFieldY), placecholder: "Update all")
@@ -118,6 +123,7 @@ class SettingsViewController: ViewController, UITextViewDelegate {
 
     let PDL = UILabel(frame: CGRect(x: 10, y: yUsed, width: 220, height: 35))
     PDL.text = "Purge duplicates:"
+    PDL.textColor = Defs.DarkRed
     scrollView.addSubview(PDL)
     yUsed += 35
     let PD = UIButton()
@@ -189,7 +195,7 @@ class SettingsViewController: ViewController, UITextViewDelegate {
       } else {
         title += "."
       }
-      userLocalProblemsTextField.text = BPM.stringifyProblems(startIdx: BPM.getUserLocalStartIdx(), endIdx: BPM.getNumKnownProblems() - 1)
+      ULPTV.text = BPM.stringifyProblems(startIdx: BPM.getUserLocalStartIdx(), endIdx: BPM.getNumKnownProblems() - 1)
     }
     let alertController = UIAlertController(title: title, message: "", preferredStyle: .alert)
     alertController.view.tintColor = Defs.RedStroke
@@ -201,7 +207,9 @@ class SettingsViewController: ViewController, UITextViewDelegate {
 
   func getAllData() -> String {
     let userLocalIdx = BPM.getUserLocalStartIdx()
-    var allData = BPM.getTimeStamp()
+    var allData = "\n#####################\n  "
+    allData.append(BPM.getTimeStamp())
+    allData.append("\n#####################\n")
     allData.append("\nBuild In Problems:\n")
     allData.append(BPM.stringifyProblems(startIdx: 0, endIdx: userLocalIdx - 1))
     allData.append("\n\nUser Local Problems:\n")
@@ -223,11 +231,12 @@ class SettingsViewController: ViewController, UITextViewDelegate {
   }
 
   @objc func keyboardWillShow(notification: NSNotification) {
-    if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-      if self.view.frame.origin.y == 0 {
-        self.view.frame.origin.y -= keyboardSize.height
-      }
-    }
+    //if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+    //  if self.view.frame.origin.y == 0 {
+    //    self.view.frame.origin.y -= keyboardSize.height
+    //  }
+    //}
+    
   }
   
   @objc func keyboardWillHide(notification: NSNotification) {

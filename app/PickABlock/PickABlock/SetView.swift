@@ -70,6 +70,7 @@ class SetView: ImageScrollView {
     let redone = undoStack.popLast()
     let strokeColorAlpha1 = UIColor(cgColor: redone!.overlayShapePath.strokeColor!).withAlphaComponent(1)
     redone!.overlayShapePath.strokeColor = strokeColorAlpha1.cgColor
+    redone!.overlayShapePath.lineWidth = 18.0
     overlayPaths.append(redone!)
   }
 
@@ -263,7 +264,7 @@ class SetView: ImageScrollView {
       let Shape = CAShapeLayer()
       self.zoomView.layer.addSublayer(Shape)
       Shape.opacity = 0.5
-      Shape.lineWidth = 4
+      Shape.lineWidth = 18.0
       Shape.lineJoin = CAShapeLayerLineJoin.miter
       Shape.strokeColor = Defs.uiColorFromHex(rgbValue: Defs.colorArray[Int(slider.value)]).cgColor
       Shape.fillColor = Defs.NoFill.cgColor

@@ -174,11 +174,12 @@ class BlockProblemManager {
         let Shape = CAShapeLayer()
         view.layer.addSublayer(Shape)
         Shape.opacity = 0.5
-        Shape.lineWidth = 5
+        Shape.lineWidth = 18.0
         Shape.lineJoin = CAShapeLayerLineJoin.miter
         Shape.strokeColor = Defs.uiColorFromHex(rgbValue: Defs.colorArray[o.color]).cgColor
         Shape.fillColor = Defs.NoFill.cgColor
         let overlayPath: UIBezierPath = UIBezierPath()
+        overlayPath.lineWidth = 18.0
         overlayPath.move(to: CGPoint(x: CGFloat(o.path[0][0]), y: CGFloat(o.path[0][1])))
         for i in 1..<o.path.count {
           overlayPath.addLine(to: CGPoint(x: CGFloat(o.path[i][0]), y: CGFloat(o.path[i][1])))
@@ -288,6 +289,7 @@ class BlockProblemManager {
   func displayHold(type: HoldType, hold: inout CAShapeLayer) {
     hold.opacity = 0.5
     hold.fillColor = Defs.White.cgColor
+    hold.lineWidth = 16.0
     switch type {
     case HoldType.begin:
       hold.strokeColor = Defs.GreenStroke.cgColor
@@ -573,6 +575,9 @@ class BlockProblemManager {
       shapes[f].fillColor = Defs.White.cgColor
     }
     currentProblem = Problem()
+    if (knownOverlays.count == 0) {
+      return
+    }
     for o in knownOverlays[oldIdx] {
       o.isHidden = true
     }

@@ -17,6 +17,10 @@ class BrowseView: ImageScrollView {
 
   override func display(_ image: UIImage) {
     super.display(image)
+    if (getBlockProblemManager().getNumKnownProblems() == 0) {
+      showNoProblemsAlert()
+      return
+    }
     getBlockProblemManager().displayKnownProblem(view: self.zoomView, problemIdx: getBlockProblemManager().getKnownProblemIdx(), shapes: &Shapes)
     mainSegment.addTarget(self, action: #selector(BrowseView.mainSegmentedControlHandler(_:)), for: .valueChanged)
     superview?.addSubview(mainSegment)
@@ -35,6 +39,17 @@ class BrowseView: ImageScrollView {
         // #selector(self.shareButtonPressed2))
 
     navigationController!.viewControllers[1].navigationItem.rightBarButtonItems = [share, commentButton]
+  }
+  
+  func showNoProblemsAlert() {
+    let alertController = UIAlertController(title: "No problems created yet.", message: "", preferredStyle: .alert)
+    alertController.view.tintColor = Defs.RedStroke
+
+    alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: { (pAction) in
+      alertController.dismiss(animated: true, completion: nil)
+    }))
+    let vc = findViewController()
+    vc?.present(alertController, animated: true, completion: nil)
   }
 
   func showCommentDialogue() {
@@ -89,6 +104,10 @@ class BrowseView: ImageScrollView {
       alertController.title = "Are you sure you want to delete a problem?"
       let okAction = UIAlertAction(title: "OK", style: .default, handler: { (pAction) in
         self.getBlockProblemManager().deleteCurrentProblem()
+        if (self.getBlockProblemManager().getNumKnownProblems() == 0) {
+          self.showNoProblemsAlert()
+          return
+        }
         self.nextButtonAction()
         alertController.dismiss(animated: true, completion: nil)
       })
