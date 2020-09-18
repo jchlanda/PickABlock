@@ -42,8 +42,8 @@ Before you set of, make sure that you have access to the following:
 * [XCode](https://developer.apple.com/xcode/).
 
 The integration of your own wall can be done in 5 simple steps:
-1. Add wall picture.
-Take a picture of the wall that you intend to climb on. It's a good idea to crop it to have the same ratio as the area dedicated for the picture in `Set` and `Browse` views (on iPhone 7 it is `638 × 1024`). This picture lives in [AlienRock2.jpg](https://github.com/jchlanda/PickABlock/blob/master/app/PickABlock/PickABlock/Assets.xcassets/AlienBlockAR2.imageset/AlienBlockAR2.jpeg) (if you decide to change the name of that file make sure to update it in the source code as well).
+1. Add a wall picture.
+Take a picture of the wall that you intend to climb on. It's a good idea to crop it to have the same ratio as the area dedicated for the picture in `Set` and `Browse` views (on iPhone 7 it is `638 × 1024`). This picture lives in [AlienRock2.jepg](https://github.com/jchlanda/PickABlock/blob/master/app/PickABlock/PickABlock/Assets.xcassets/AlienBlockAR2.imageset/AlienBlockAR2.jpeg) (if you decide to change the name of that file make sure to update it in the source code as well).
 2. Create paths representing the holds.
 This is done in order to let the app know where the holds on the wall are. There is very little fancy about this, in fact it is dead simple (and a bit laborious). Open your image in Gimp select: `Path Tool: Create and edit paths B` form the toolbox menu and create a path for each and every hold on your wall, make sure that each path forms a loop. When done right click on your path layer in the `Paths` tab and select `Export Path...`, provide the name, say `AlienRock2.svg`.
 See the picture for details:
