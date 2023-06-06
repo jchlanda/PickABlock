@@ -39,7 +39,7 @@ class SettingsViewController: ViewController, UITextViewDelegate {
     let navigationController = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController
     navigationController!.viewControllers[1].navigationItem.rightBarButtonItem = shareButton
 
-    let textFieldY = (self.view.frame.maxY - yOffset - CGFloat(7 * 10 + 3 * 10 + 4 * 35)) / 3 // 7 offsets, 3 extra offsets and 4 buttons
+    let textFieldY = (self.view.frame.maxY - yOffset - CGFloat(240)) / CGFloat(3) // 7 * 10 + 3 * 10 + 4 * 35 - 7 offsets, 3 extra offsets and 4 buttons
 
     var yUsed = 10
     let UDP = UILabel(frame: CGRect(x: 10, y: yUsed, width: 220, height: 35))
